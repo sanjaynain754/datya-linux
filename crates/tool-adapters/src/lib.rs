@@ -73,20 +73,17 @@ pub struct ExecutionResult {
     pub evidence_path: Option<PathBuf>,
 }
 
+#[derive(Default)]
 pub struct RateLimiter {
     last_run: Option<Instant>,
-}
-impl Default for RateLimiter {
-    fn default() -> Self {
-        Self { last_run: None }
-    }
 }
 impl RateLimiter {
     fn allow(&mut self, interval: Duration) -> bool {
         let now = Instant::now();
-        let allowed = self
-            .last_run
-            .map_or(true, |last| now.duration_since(last) >= interval);
+        let allowed = match self.last_run {
+            None => true,
+            Some(last) => now.duration_since(last) >= interval,
+        };
         if allowed {
             self.last_run = Some(now);
         }
