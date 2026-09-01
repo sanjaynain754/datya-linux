@@ -44,6 +44,30 @@ pub const ADAPTERS: &[AdapterSpec] = &[
         needs_scope: true,
         max_args: 8,
     },
+    AdapterSpec {
+        id: "process-audit",
+        executable: "/usr/bin/ps",
+        needs_scope: false,
+        max_args: 4,
+    },
+    AdapterSpec {
+        id: "kernel-posture",
+        executable: "/usr/bin/uname",
+        needs_scope: false,
+        max_args: 2,
+    },
+    AdapterSpec {
+        id: "firewall-status",
+        executable: "/usr/sbin/ufw",
+        needs_scope: false,
+        max_args: 2,
+    },
+    AdapterSpec {
+        id: "apparmor-review",
+        executable: "/usr/sbin/aa-status",
+        needs_scope: false,
+        max_args: 2,
+    },
 ];
 
 #[derive(Clone, Debug)]
