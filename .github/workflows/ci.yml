@@ -1,0 +1,60 @@
+name: Datya Linux CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    name: Rust format, tests, and clippy
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust components
+        run: rustup component add rustfmt clippy
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      - name: Run tests
+        run: cargo test --workspace --locked
+      - name: Run clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+
+  cpp:
+    name: C++17 control daemon
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install --yes cmake g++ libssl-dev
+      - name: Configure
+        run: cmake -S cpp-control -B build -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build --parallel
+
+  policy:
+    name: Script and policy checks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate shell scripts
+        run: |
+          bash -n iso/build-datya-iso.sh
+          bash -n iso/auto/config
+          bash -n iso/config/hooks/normal/0900-install-datya-security.hook.chroot
+          bash -n security/signing/generate-mok.sh
+          bash -n security/signing/sign-module.sh
+          bash -n security/signing/enroll-mok.sh
+      - name: Reject private signing material
+        run: |
+          ! find . -type f \( -name '*.priv' -o -name '*.key' \) -not -path './.git/*' -print -quit | grep -q .
+          grep -Fq 'security/signing/*.priv' .gitignore
+      - name: Check source policy markers
+        run: |
+          grep -q 'kernel-module-policy=signed-only' iso/build-datya-iso.sh
+          grep -q 'remote-reporting=disabled-by-default' iso/build-datya-iso.sh
+          grep -q 'assessment=requires-explicit-scope' iso/build-datya-iso.sh

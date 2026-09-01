@@ -17,6 +17,8 @@ The project aims to make privacy and system activity understandable without hidi
 
 This repository contains the initial design documents and a small Rust prototype for collecting local network activity signals. It is **not yet a complete Linux distribution** and should not be used as a security boundary or production intrusion detector.
 
+GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, shell syntax, private-key safeguards, and Datya policy markers on every push and pull request.
+
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
