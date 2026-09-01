@@ -21,6 +21,7 @@ This repository contains the initial design documents and a small Rust prototype
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Threat model](docs/THREAT_MODEL.md)
+- [Developer environment](docs/DEVELOPER_ENVIRONMENT.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
 

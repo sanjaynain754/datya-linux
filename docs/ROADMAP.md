@@ -21,6 +21,13 @@
 - Add a reviewable policy editor and emergency recovery mode.
 - Test boot, update, suspend, Wi-Fi, graphics, audio, and storage across target hardware.
 
+## Phase 2A — Developer Workspace
+
+- Add an optional graphical workspace with terminal, editor, project browser, and local result panel.
+- Provide verified, pinned language toolchains and offline-capable package setup.
+- Implement safe, project-scoped execution with timeouts, resource limits, and explicit network consent.
+- Add a disposable lab profile for authorized defensive testing, with clear isolation and audit results.
+
 ## Phase 3 — ARM64 and release engineering
 
 - Publish Raspberry Pi 5 image and ARM64 build pipeline.
