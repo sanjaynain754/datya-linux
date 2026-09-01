@@ -1,8 +1,8 @@
 # Datya Linux
 
-**Datya Linux** is an open, security-first **cybersecurity Linux distribution** for ethical hackers, blue teams, incident responders, security learners, and researchers using modern laptops, desktops, workstations, Raspberry Pi 5, and other capable x86_64/ARM64 systems.
+**Datya Linux** is an open, security-first **general-purpose Linux distribution** with a built-in cybersecurity workbench for ethical hackers, blue teams, incident responders, security learners, researchers, developers, administrators, and everyday users using modern laptops, desktops, workstations, Raspberry Pi 5, and other capable x86_64/ARM64 systems.
 
-The project aims to make privacy and system activity understandable without hiding the controls from the user. Datya will ship with no telemetry by default, transparent security signals, verifiable updates, and a modular design that people can customize and redistribute.
+The project aims to make privacy and system activity understandable without hiding the controls from the user. Datya will ship with no telemetry by default, transparent security signals, verifiable updates, and a modular design that people can customize and redistribute. It is a general-purpose operating system, not a guarantee that every use or outcome can be controlled by its maintainers.
 
 ## Principles
 
@@ -20,6 +20,7 @@ This repository contains the initial design documents and a small Rust prototype
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md)
+- [Project scope](docs/PROJECT_SCOPE.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Developer environment](docs/DEVELOPER_ENVIRONMENT.md)
 - [Cybersecurity Workbench](docs/CYBERSECURITY_WORKBENCH.md)
