@@ -1,0 +1,25 @@
+[Unit]
+Description=Datya Linux local cybersecurity control daemon
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/datya/datya-control /var/lib/datya/events.log
+Restart=on-failure
+RestartSec=2
+User=datya-guardian
+Group=datya-guardian
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateDevices=yes
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+ReadWritePaths=/var/lib/datya
+CapabilityBoundingSet=
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=multi-user.target
