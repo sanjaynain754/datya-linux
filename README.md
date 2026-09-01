@@ -23,6 +23,7 @@ GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, 
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Project scope](docs/PROJECT_SCOPE.md)
+- [Four-user collaboration](docs/COLLABORATION.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Developer environment](docs/DEVELOPER_ENVIRONMENT.md)
 - [Cybersecurity Workbench](docs/CYBERSECURITY_WORKBENCH.md)
@@ -38,11 +39,11 @@ The `guardian` crate is intentionally read-only and unprivileged. It reports loc
 
 The `datya-sensor` crate is the first cybersecurity system-sensor layer. It reads kernel release, architecture, OS release, CPU model, memory, firmware product information, and Secure Boot state from local procfs/sysfs sources and emits a `datya.system.v1` record. It performs no kernel modification, privilege escalation, packet interception, or remote reporting. Missing firmware fields are reported as `null`, not guessed.
 
-The `datya-control-daemon` is the keyboard-first cybersecurity orchestrator. It exposes a modular catalog of 64 security capabilities, supports scope management, defaults to dry-run planning, and blocks network-capable actions unless the target is explicitly authorized. It currently emits action plans; individual tool adapters will be added only with their own permission, timeout, rate-limit, and evidence policies.
+The `datya-control-daemon` is the keyboard-first general-purpose workbench orchestrator. It exposes a modular catalog of 77 security capabilities, supports scope management, defaults to dry-run planning, and blocks network-capable actions unless the target is explicitly authorized. The `datya-collab-session` crate provides a four-participant shared audit core for proposals, approvals, command state, and bounded result summaries. Individual tool adapters will be added only with their own permission, timeout, rate-limit, and evidence policies.
 
 The `datya-tool-adapters` crate provides the first adapter policy layer. It executes only fixed allowlisted binaries without a shell, supports dry-run and execute modes, validates scoped targets, enforces a minimum interval between runs, applies a timeout, caps captured output, and writes evidence to a local temporary path. The initial adapters cover `ss`, `ip`, `dig`, and `curl`; additional tools must be added deliberately with a reviewable policy.
 
-The `cpp-control` directory contains a C++17 control-daemon reference implementation. It exposes the 64+ tool catalog, keeps actions in dry-run planning mode, requires an authorized scope for network tools, and writes local append-only hash-chained events. Build it with CMake and OpenSSL: `cmake -S cpp-control -B build && cmake --build build`. Run `./build/datya-control /var/lib/datya/events.log`, then use `scope add <target>`, `run <tool> <target>`, and `verify`.
+The `cpp-control` directory contains a C++17 control-daemon reference implementation. It exposes the 77-tool catalog, keeps actions in dry-run planning mode, requires an authorized scope for network tools, and writes local append-only hash-chained events. Build it with CMake and OpenSSL: `cmake -S cpp-control -B build && cmake --build build`. Run `./build/datya-control /var/lib/datya/events.log`, then use `scope add <target>`, `run <tool> <target>`, and `verify`.
 
 ```bash
 cargo run -p guardian

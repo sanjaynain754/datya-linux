@@ -1,0 +1,12 @@
+[package]
+name = "datya-collab-session"
+version = "0.1.0"
+edition = "2021"
+description = "Four-participant, auditable collaboration session core for Datya Linux"
+license = "Apache-2.0"
+
+[lib]
+name = "datya_collab_session"
+path = "src/lib.rs"
+
+[dependencies]

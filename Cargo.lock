@@ -3,6 +3,10 @@
 version = 3
 
 [[package]]
+name = "datya-collab-session"
+version = "0.1.0"
+
+[[package]]
 name = "datya-control-daemon"
 version = "0.1.0"
 
