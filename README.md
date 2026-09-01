@@ -38,6 +38,8 @@ The `datya-control-daemon` is the keyboard-first cybersecurity orchestrator. It 
 
 The `datya-tool-adapters` crate provides the first adapter policy layer. It executes only fixed allowlisted binaries without a shell, supports dry-run and execute modes, validates scoped targets, enforces a minimum interval between runs, applies a timeout, caps captured output, and writes evidence to a local temporary path. The initial adapters cover `ss`, `ip`, `dig`, and `curl`; additional tools must be added deliberately with a reviewable policy.
 
+The `cpp-control` directory contains a C++17 control-daemon reference implementation. It exposes the 64+ tool catalog, keeps actions in dry-run planning mode, requires an authorized scope for network tools, and writes local append-only hash-chained events. Build it with CMake and OpenSSL: `cmake -S cpp-control -B build && cmake --build build`. Run `./build/datya-control /var/lib/datya/events.log`, then use `scope add <target>`, `run <tool> <target>`, and `verify`.
+
 ```bash
 cargo run -p guardian
 cargo test --workspace
