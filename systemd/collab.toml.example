@@ -1,0 +1,18 @@
+# Copy to /etc/datya/collab.toml and set owner root:datya-guardian, mode 0640.
+# Never store private keys in Git or inside a public ISO.
+listen = "127.0.0.1:9443"
+max_participants = 4
+session_ttl_seconds = 28800
+transport = "websocket+sse"
+tls_min_version = "1.3"
+client_auth = "short-lived-token"
+# For LAN deployment, prefer mutual TLS and bind to an explicitly managed address.
+require_scope = true
+dry_run_default = true
+redact_secrets = true
+max_event_bytes = 4096
+heartbeat_seconds = 15
+replay_window_events = 256
+cert_file = "/etc/datya/tls/server.crt"
+key_file = "/etc/datya/tls/server.key"
+# token_issuer and signing keys are supplied by a protected secret store.

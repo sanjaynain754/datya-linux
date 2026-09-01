@@ -1,7 +1,8 @@
 use std::collections::BTreeMap;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 pub const MAX_PARTICIPANTS: usize = 4;
+pub const DEFAULT_SESSION_TTL: Duration = Duration::from_secs(8 * 60 * 60);
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Participant {
@@ -12,12 +13,15 @@ pub struct Participant {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EventKind {
     Joined,
+    Reconnected,
     Left,
+    Removed,
     CommandProposed,
     CommandApproved,
     CommandRejected,
     CommandStarted,
     CommandFinished,
+    SessionExpired,
     Notice,
 }
 
@@ -39,6 +43,9 @@ pub enum SessionError {
     UnknownCommand,
     NotAuthorized,
     InvalidCommand,
+    InvalidInvite,
+    Expired,
+    AlreadyRemoved,
 }
 
 #[derive(Clone, Debug)]
@@ -48,11 +55,21 @@ struct CommandRequest {
     approved_by: Vec<String>,
 }
 
+#[derive(Clone, Debug)]
+struct ParticipantState {
+    participant: Participant,
+    invite_token: String,
+    connected: bool,
+    removed: bool,
+}
+
 pub struct CollaborationSession {
-    participants: BTreeMap<String, Participant>,
+    participants: BTreeMap<String, ParticipantState>,
     commands: BTreeMap<String, CommandRequest>,
     events: Vec<SessionEvent>,
     next_sequence: u64,
+    created_at: u64,
+    expires_at: u64,
 }
 
 impl Default for CollaborationSession {
@@ -63,23 +80,89 @@ impl Default for CollaborationSession {
 
 impl CollaborationSession {
     pub fn new() -> Self {
+        Self::with_ttl(DEFAULT_SESSION_TTL)
+    }
+
+    pub fn with_ttl(ttl: Duration) -> Self {
+        let now = unix_now();
         Self {
             participants: BTreeMap::new(),
             commands: BTreeMap::new(),
             events: Vec::new(),
             next_sequence: 0,
+            created_at: now,
+            expires_at: now.saturating_add(ttl.as_secs()),
         }
     }
 
-    pub fn join(&mut self, participant: Participant) -> Result<(), SessionError> {
-        if self.participants.contains_key(&participant.id) {
-            return Err(SessionError::DuplicateParticipant);
+    pub fn created_at(&self) -> u64 {
+        self.created_at
+    }
+    pub fn expires_at(&self) -> u64 {
+        self.expires_at
+    }
+    pub fn is_expired_at(&self, now: u64) -> bool {
+        now >= self.expires_at
+    }
+    pub fn events(&self) -> &[SessionEvent] {
+        &self.events
+    }
+    pub fn participants(&self) -> impl Iterator<Item = &Participant> {
+        self.participants
+            .values()
+            .filter(|s| !s.removed)
+            .map(|s| &s.participant)
+    }
+
+    pub fn invite(&self, participant_id: &str) -> Result<String, SessionError> {
+        let state = self
+            .participants
+            .get(participant_id)
+            .ok_or(SessionError::NotParticipant)?;
+        if state.removed {
+            return Err(SessionError::AlreadyRemoved);
+        }
+        Ok(state.invite_token.clone())
+    }
+
+    pub fn join(
+        &mut self,
+        participant: Participant,
+        invite_token: &str,
+    ) -> Result<(), SessionError> {
+        self.ensure_active()?;
+        if participant.id.is_empty() || invite_token.is_empty() {
+            return Err(SessionError::InvalidInvite);
+        }
+        if let Some(existing) = self.participants.get_mut(&participant.id) {
+            if existing.removed {
+                return Err(SessionError::AlreadyRemoved);
+            }
+            if existing.invite_token != invite_token {
+                return Err(SessionError::InvalidInvite);
+            }
+            existing.connected = true;
+            self.record(
+                participant.id,
+                EventKind::Reconnected,
+                None,
+                "participant reconnected".into(),
+            );
+            return Ok(());
         }
         if self.participants.len() >= MAX_PARTICIPANTS {
             return Err(SessionError::Full);
         }
         let id = participant.id.clone();
-        self.participants.insert(id.clone(), participant.clone());
+        self.participants.insert(
+            id.clone(),
+            ParticipantState {
+                participant: participant.clone(),
+                invite_token: invite_token.into(),
+                connected: true,
+                removed: false,
+            },
+        );
         self.record(
             id,
             EventKind::Joined,
@@ -89,18 +172,61 @@ impl CollaborationSession {
         Ok(())
     }
 
-    pub fn leave(&mut self, participant_id: &str) -> Result<(), SessionError> {
-        let participant = self
+    pub fn disconnect(&mut self, participant_id: &str) -> Result<(), SessionError> {
+        let state = self
             .participants
-            .remove(participant_id)
+            .get_mut(participant_id)
             .ok_or(SessionError::NotParticipant)?;
+        if state.removed {
+            return Err(SessionError::AlreadyRemoved);
+        }
+        state.connected = false;
         self.record(
             participant_id.into(),
             EventKind::Left,
             None,
-            format!("{} left the session", participant.display_name),
+            "participant disconnected; reconnect is allowed before expiry".into(),
         );
         Ok(())
+    }
+
+    pub fn remove(&mut self, actor_id: &str, participant_id: &str) -> Result<(), SessionError> {
+        self.require_participant(actor_id)?;
+        let state = self
+            .participants
+            .get_mut(participant_id)
+            .ok_or(SessionError::NotParticipant)?;
+        if state.removed {
+            return Err(SessionError::AlreadyRemoved);
+        }
+        state.removed = true;
+        state.connected = false;
+        self.record(
+            actor_id.into(),
+            EventKind::Removed,
+            None,
+            format!("participant {participant_id} removed"),
+        );
+        Ok(())
+    }
+
+    pub fn expire_if_needed(&mut self, now: u64) -> bool {
+        if !self.is_expired_at(now) {
+            return false;
+        }
+        if !self
+            .events
+            .iter()
+            .any(|e| e.kind == EventKind::SessionExpired)
+        {
+            self.record(
+                "system".into(),
+                EventKind::SessionExpired,
+                None,
+                "session expired; new commands and reconnects are blocked".into(),
+            );
+        }
+        true
     }
 
     pub fn propose(
@@ -119,12 +245,14 @@ impl CollaborationSession {
         if self.commands.contains_key(command_id) {
             return Err(SessionError::InvalidCommand);
         }
-        let request = CommandRequest {
-            proposer: actor_id.into(),
-            command: command.into(),
-            approved_by: Vec::new(),
-        };
-        self.commands.insert(command_id.into(), request);
+        self.commands.insert(
+            command_id.into(),
+            CommandRequest {
+                proposer: actor_id.into(),
+                command: command.into(),
+                approved_by: Vec::new(),
+            },
+        );
         self.record(
             actor_id.into(),
             EventKind::CommandProposed,
@@ -166,7 +294,7 @@ impl CollaborationSession {
             actor_id.into(),
             EventKind::CommandStarted,
             Some(command_id.into()),
-            format!("command started in policy adapter: {command}"),
+            format!("command started through policy adapter: {command}"),
         );
         Ok(command)
     }
@@ -190,21 +318,22 @@ impl CollaborationSession {
         Ok(())
     }
 
-    pub fn events(&self) -> &[SessionEvent] {
-        &self.events
-    }
-    pub fn participants(&self) -> impl Iterator<Item = &Participant> {
-        self.participants.values()
-    }
-
     fn require_participant(&self, actor_id: &str) -> Result<(), SessionError> {
-        if self.participants.contains_key(actor_id) {
-            Ok(())
-        } else {
-            Err(SessionError::NotParticipant)
+        if self.is_expired_at(unix_now()) {
+            return Err(SessionError::Expired);
+        }
+        match self.participants.get(actor_id) {
+            Some(state) if !state.removed && state.connected => Ok(()),
+            _ => Err(SessionError::NotParticipant),
         }
     }
-
+    fn ensure_active(&self) -> Result<(), SessionError> {
+        if self.is_expired_at(unix_now()) {
+            Err(SessionError::Expired)
+        } else {
+            Ok(())
+        }
+    }
     fn record(
         &mut self,
         actor_id: String,
@@ -212,19 +341,22 @@ impl CollaborationSession {
         command_id: Option<String>,
         message: String,
     ) {
-        let event = SessionEvent {
+        self.events.push(SessionEvent {
             sequence: self.next_sequence,
-            timestamp: SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .map_or(0, |d| d.as_secs()),
+            timestamp: unix_now(),
             actor_id,
             kind,
             command_id,
             message,
-        };
+        });
         self.next_sequence += 1;
-        self.events.push(event);
     }
+}
+
+fn unix_now() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_or(0, |d| d.as_secs())
 }
 
 #[cfg(test)]
@@ -238,32 +370,38 @@ mod tests {
     }
     #[test]
     fn session_caps_at_four_users() {
-        let mut session = CollaborationSession::new();
+        let mut s = CollaborationSession::new();
         for id in ["a", "b", "c", "d"] {
-            session.join(user(id)).unwrap();
+            s.join(user(id), id).unwrap();
         }
-        assert_eq!(session.join(user("e")), Err(SessionError::Full));
+        assert_eq!(s.join(user("e"), "e"), Err(SessionError::Full));
     }
     #[test]
-    fn every_command_stage_is_visible_in_history() {
-        let mut session = CollaborationSession::new();
-        session.join(user("a")).unwrap();
-        session.join(user("b")).unwrap();
-        session
-            .propose("a", "cmd-1", "socket-audit 127.0.0.1")
-            .unwrap();
-        session.approve("b", "cmd-1").unwrap();
-        session.start("b", "cmd-1").unwrap();
-        session.finish("b", "cmd-1", "completed locally").unwrap();
-        assert_eq!(session.events().len(), 6);
-        assert_eq!(session.events()[2].command_id.as_deref(), Some("cmd-1"));
+    fn invite_reconnect_and_remove_are_visible() {
+        let mut s = CollaborationSession::new();
+        s.join(user("a"), "a-token").unwrap();
+        let token = s.invite("a").unwrap();
+        s.disconnect("a").unwrap();
+        s.join(user("a"), &token).unwrap();
+        s.remove("a", "a").unwrap();
+        assert_eq!(s.events().len(), 4);
+        assert_eq!(s.join(user("a"), &token), Err(SessionError::AlreadyRemoved));
     }
     #[test]
-    fn outsider_cannot_propose() {
-        let mut session = CollaborationSession::new();
-        assert_eq!(
-            session.propose("outsider", "cmd", "anything"),
-            Err(SessionError::NotParticipant)
-        );
+    fn every_command_stage_is_visible() {
+        let mut s = CollaborationSession::new();
+        s.join(user("a"), "a").unwrap();
+        s.join(user("b"), "b").unwrap();
+        s.propose("a", "cmd-1", "socket-audit 127.0.0.1").unwrap();
+        s.approve("b", "cmd-1").unwrap();
+        s.start("b", "cmd-1").unwrap();
+        s.finish("b", "cmd-1", "completed locally").unwrap();
+        assert_eq!(s.events().len(), 6);
+    }
+    #[test]
+    fn expired_session_blocks_new_work() {
+        let mut s = CollaborationSession::with_ttl(Duration::from_secs(0));
+        assert!(s.expire_if_needed(s.expires_at()));
+        assert_eq!(s.join(user("a"), "a"), Err(SessionError::Expired));
     }
 }

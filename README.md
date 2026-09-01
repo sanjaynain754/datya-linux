@@ -24,6 +24,7 @@ GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Project scope](docs/PROJECT_SCOPE.md)
 - [Four-user collaboration](docs/COLLABORATION.md)
+- [Collaboration transport protocol](docs/COLLABORATION_PROTOCOL.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Developer environment](docs/DEVELOPER_ENVIRONMENT.md)
 - [Cybersecurity Workbench](docs/CYBERSECURITY_WORKBENCH.md)
@@ -32,6 +33,7 @@ GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, 
 - [Debian ISO builder](iso/README.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
+- [Dashboard prototype](dashboard/README.md)
 
 ## Prototype
 

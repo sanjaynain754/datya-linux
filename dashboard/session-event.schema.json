@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datya.local/schemas/session-event.v1.json",
+  "title": "Datya Collaboration Session Event",
+  "type": "object",
+  "required": ["type", "sequence", "timestamp", "actor_id", "event"],
+  "properties": {
+    "type": {"const": "session.event"},
+    "sequence": {"type": "integer", "minimum": 0},
+    "timestamp": {"type": "integer", "minimum": 0},
+    "actor_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "event": {"type": "string", "enum": ["joined", "reconnected", "left", "removed", "command.proposed", "command.approved", "command.rejected", "command.started", "command.finished", "session.expired", "notice"]},
+    "command_id": {"type": ["string", "null"], "maxLength": 128},
+    "message": {"type": "string", "maxLength": 512}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+[Unit]
+Description=Datya authenticated collaboration transport
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Replace with the reviewed, packaged transport binary.
+ExecStart=/usr/lib/datya/datya-collab-server --config /etc/datya/collab.toml
+User=datya-guardian
+Group=datya-guardian
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateDevices=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ReadWritePaths=/var/lib/datya
+CapabilityBoundingSet=
+
+[Install]
+WantedBy=multi-user.target

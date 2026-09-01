@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Datya Collaboration Dashboard Prototype</title>
+  <style>
+    :root { color-scheme: dark; --bg:#161616; --panel:#242424; --cyan:#00c7c7; --amber:#f1c21b; --muted:#a8a8a8; }
+    * { box-sizing:border-box; } body { margin:0; background:var(--bg); color:#f4f5f7; font:15px system-ui,sans-serif; }
+    header { padding:22px 28px; border-bottom:1px solid #393939; display:flex; justify-content:space-between; }
+    main { padding:24px 28px; max-width:1400px; margin:auto; } h1 { margin:0; font-size:24px; } h2 { font-size:16px; color:var(--cyan); }
+    .status { color:#8fe3d5; font-family:monospace; } .grid { display:grid; grid-template-columns:280px 1fr; gap:20px; }
+    .panel { background:var(--panel); border:1px solid #3c3c3c; border-radius:8px; padding:18px; } .people { display:grid; gap:10px; }
+    .person { padding:12px; background:#303030; border-left:3px solid var(--cyan); } .offline { border-left-color:#6f6f6f; color:var(--muted); }
+    .command { padding:16px; background:#303030; border-radius:6px; margin-bottom:12px; } .command strong { color:#fff; }
+    .pill { display:inline-block; border-radius:12px; padding:3px 9px; font-size:12px; margin-left:8px; } .running { background:#005d5d; } .planned { background:#5a4300; color:#ffe08a; }
+    .timeline { font-family:ui-monospace,monospace; font-size:13px; } .event { padding:8px 0; border-bottom:1px solid #3a3a3a; } .seq { color:var(--cyan); width:38px; display:inline-block; }
+    .warning { color:var(--amber); } button { background:#005d5d; color:white; border:0; border-radius:4px; padding:9px 12px; cursor:pointer; } button:focus { outline:2px solid var(--amber); }
+    @media (max-width:800px) { .grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header><h1>Datya / Shared Session <span class="status">● TLS 1.3 · authenticated · live</span></h1><div>expires in 07:42:18</div></header>
+  <main>
+    <div class="grid">
+      <aside>
+        <section class="panel"><h2>Participants · 3/4</h2><div class="people">
+          <div class="person"><strong>Asha</strong><br><small>connected · proposer</small></div>
+          <div class="person"><strong>Ravi</strong><br><small>connected · approver</small></div>
+          <div class="person"><strong>Meera</strong><br><small>connected · observer</small></div>
+          <div class="person offline"><strong>slot available</strong><br><small>invite only</small></div>
+        </div><br><button>Invite participant</button></section>
+        <section class="panel"><h2>Authorized scope</h2><div class="status">127.0.0.1</div><div class="status">10.10.0.10</div><p class="warning">Network actions outside scope are blocked.</p></section>
+      </aside>
+      <section>
+        <section class="panel"><h2>Command board</h2>
+          <div class="command"><strong>cmd-17 · socket-audit 127.0.0.1</strong><span class="pill running">RUNNING</span><p>Asha proposed · Ravi approved · dry-run policy</p><small>All participants can see this state and its bounded result.</small></div>
+          <div class="command"><strong>cmd-16 · dns-inspect 10.10.0.10</strong><span class="pill planned">PLANNED</span><p>Meera proposed · awaiting approval</p><button>Approve</button></div>
+        </section>
+        <section class="panel"><h2>Live event timeline · contiguous sequence</h2><div class="timeline">
+          <div class="event"><span class="seq">#041</span> 18:24:02 · Asha · command.started · cmd-17</div>
+          <div class="event"><span class="seq">#040</span> 18:23:59 · Ravi · command.approved · cmd-17</div>
+          <div class="event"><span class="seq">#039</span> 18:23:41 · Asha · command.proposed · cmd-17</div>
+          <div class="event"><span class="seq">#038</span> 18:22:17 · Meera · joined</div>
+        </div></section>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
