@@ -25,7 +25,10 @@ fn parse_event(line: &str) -> Option<Alert> {
         "exec" => (
             "info",
             85,
-            format!("Process execution observed: {}", field(line, "path").unwrap_or("unknown")),
+            format!(
+                "Process execution observed: {}",
+                field(line, "path").unwrap_or("unknown")
+            ),
         ),
         "socket" => (
             "low",
@@ -38,7 +41,13 @@ fn parse_event(line: &str) -> Option<Alert> {
         ),
         _ => ("info", 35, "Unknown Guardian event observed".into()),
     };
-    Some(Alert { event, pid, severity, confidence, message })
+    Some(Alert {
+        event,
+        pid,
+        severity,
+        confidence,
+        message,
+    })
 }
 
 fn json_escape(value: &str) -> String {
@@ -50,7 +59,9 @@ fn print_alert(alert: &Alert) {
         .duration_since(UNIX_EPOCH)
         .map(|duration| duration.as_secs())
         .unwrap_or_default();
-    let pid = alert.pid.map_or_else(|| "null".into(), |value| value.to_string());
+    let pid = alert
+        .pid
+        .map_or_else(|| "null".into(), |value| value.to_string());
     println!(
         "{{\"schema\":\"datya.alert.v1\",\"timestamp\":{},\"event\":\"{}\",\"pid\":{},\"severity\":\"{}\",\"confidence\":{},\"message\":\"{}\",\"action\":\"observe-only\"}}",
         timestamp,

@@ -39,8 +39,9 @@ bool EventLog::append(const std::string& type, const std::string& payload, std::
     while (std::getline(input, line)) { if (!line.empty()) ++sequence; }
     if (sequence > 0) {
         std::ifstream tail(path_);
-        while (std::getline(tail, line)) {}
-        std::istringstream fields(line);
+        std::string last_line;
+        while (std::getline(tail, line)) { last_line = line; }
+        std::istringstream fields(last_line);
         std::string ignored, timestamp, type_field, payload_field;
         std::getline(fields, ignored, '\t'); std::getline(fields, timestamp, '\t'); std::getline(fields, type_field, '\t'); std::getline(fields, payload_field, '\t'); std::getline(fields, previous, '\t'); std::getline(fields, previous, '\t');
     }

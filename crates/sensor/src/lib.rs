@@ -15,7 +15,9 @@ pub struct SystemEvidence {
 }
 
 fn read_trimmed(path: impl AsRef<Path>) -> Option<String> {
-    fs::read_to_string(path).ok().map(|value| value.trim().to_string())
+    fs::read_to_string(path)
+        .ok()
+        .map(|value| value.trim().to_string())
 }
 
 fn parse_os_release() -> (String, String) {
@@ -52,7 +54,9 @@ fn cpu_model() -> String {
 }
 
 fn secure_boot_state() -> Option<bool> {
-    let value = fs::read("/sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c").ok()?;
+    let value =
+        fs::read("/sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c")
+            .ok()?;
     Some(value.last().copied() == Some(1))
 }
 

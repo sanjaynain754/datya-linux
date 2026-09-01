@@ -36,7 +36,11 @@ fn parse_tcp_table(contents: &str) -> Vec<SocketSignal> {
             let local = parse_endpoint(fields.get(1)?)?;
             let remote = parse_endpoint(fields.get(2)?)?;
             let state = fields.get(3)?.to_string();
-            Some(SocketSignal { local, remote, state })
+            Some(SocketSignal {
+                local,
+                remote,
+                state,
+            })
         })
         .collect()
 }
@@ -62,16 +66,22 @@ mod tests {
 
     #[test]
     fn parses_procfs_ipv4_endpoint() {
-        assert_eq!(parse_endpoint("0100007F:1F90"), Some("127.0.0.1:8080".into()));
+        assert_eq!(
+            parse_endpoint("0100007F:1F90"),
+            Some("127.0.0.1:8080".into())
+        );
     }
 
     #[test]
     fn parses_tcp_row() {
         let table = "  sl  local_address rem_address   st\n  0: 0100007F:1F90 00000000:0000 0A 00000000:0000 00:00000000 00000000   0        0 1 2";
-        assert_eq!(parse_tcp_table(table), vec![SocketSignal {
-            local: "127.0.0.1:8080".into(),
-            remote: "0.0.0.0:0".into(),
-            state: "0A".into(),
-        }]);
+        assert_eq!(
+            parse_tcp_table(table),
+            vec![SocketSignal {
+                local: "127.0.0.1:8080".into(),
+                remote: "0.0.0.0:0".into(),
+                state: "0A".into(),
+            }]
+        );
     }
 }
