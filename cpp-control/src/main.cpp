@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
         else if (command == "scope" && a == "list") { for (const auto& target : scope) std::cout << "authorized: " << target << '\n'; }
         else if (command == "run") {
             const Tool* tool = find_tool(a);
-            const bool allowed = tool != nullptr && !tool->network || (tool != nullptr && scope.count(b) > 0);
+            const bool allowed = tool != nullptr && (!tool->network || scope.count(b) > 0);
             std::string error;
             if (!tool) std::cout << "blocked: unknown tool\n";
             else if (!allowed) std::cout << "blocked: target is outside authorized scope\n";

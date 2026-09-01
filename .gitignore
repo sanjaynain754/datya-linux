@@ -5,3 +5,5 @@ security/signing/*.pem
 security/signing/*.der
 *.ko
 *.ko.unsigned-backup
+target/
+build/
