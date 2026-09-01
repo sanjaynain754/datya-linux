@@ -34,3 +34,16 @@ The module should be shipped disabled unless the user chooses the Guardian kerne
 ## Important limitations
 
 A kernel module cannot guarantee that a user is untraceable. Firmware, bootloader, kernel, privileged malware, hardware, network observers, and remote services can observe or alter activity outside this module's visibility. The module is therefore a **local evidence sensor**, not an anonymity mechanism or complete tracking detector. Datya must communicate that limitation in the UI and documentation.
+
+## User-space alerts
+
+The `datya-guardian-daemon` binary reads Guardian lines from standard input and emits local JSON-lines alerts using the `datya.alert.v1` schema. It assigns severity and confidence to observable events and marks the action as `observe-only`; it does not block or alter the event.
+
+For a quick test, build the workspace and pipe a kernel-style line into the daemon:
+
+```bash
+printf '%s\n' 'datya_guardian event=exec pid=42 path=/usr/bin/ssh' \\
+  | target/debug/datya-guardian-daemon
+```
+
+The repository also contains a systemd template at `systemd/datya-guardian.service`. Before enabling it, package the binary, create the dedicated `datya-guardian` account, review journal permissions, and adapt paths for the target image. The service denies network address families so alert data stays local.

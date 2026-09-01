@@ -1,0 +1,22 @@
+[Unit]
+Description=Datya Guardian local security alert daemon
+After=systemd-journald.service
+
+[Service]
+Type=simple
+ExecStart=/bin/sh -c 'exec journalctl --follow --kernel --output=cat | exec /usr/bin/datya-guardian-daemon'
+Restart=on-failure
+RestartSec=2
+User=datya-guardian
+Group=datya-guardian
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+ReadWritePaths=/run/datya
+StandardInput=null
+
+[Install]
+WantedBy=multi-user.target

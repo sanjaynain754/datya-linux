@@ -1,0 +1,8 @@
+[package]
+name = "datya-guardian-daemon"
+version = "0.1.0"
+edition = "2021"
+description = "Local real-time alert daemon for Datya Guardian kernel evidence"
+license = "Apache-2.0"
+
+[dependencies]
