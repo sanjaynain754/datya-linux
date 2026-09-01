@@ -20,6 +20,11 @@ command -v lb >/dev/null || { echo "live-build is required (install package: liv
 cd "$PROJECT_DIR"
 rm -rf config cache chroot binary .build
 mkdir -p auto config/package-lists config/includes.chroot/etc/datya config/includes.chroot/usr/local/bin
+mkdir -p config/includes.chroot/usr/src/datya/cpp-control/src config/includes.chroot/usr/src/datya/kernel
+cp -a "$PROJECT_DIR/../cpp-control/." config/includes.chroot/usr/src/datya/cpp-control/
+cp -a "$PROJECT_DIR/../kernel/." config/includes.chroot/usr/src/datya/kernel/
+mkdir -p config/includes.chroot/etc/systemd/system
+cp "$PROJECT_DIR/../systemd/datya-control.service" config/includes.chroot/etc/systemd/system/
 
 ARCHITECTURE="$ARCHITECTURE" DEBIAN_SUITE="$SUITE" ./auto/config
 
@@ -35,7 +40,7 @@ network-manager
 procps psmisc iproute2 iputils-ping dnsutils curl
 python3
 rustc cargo
-build-essential cmake pkg-config libssl-dev
+build-essential cmake pkg-config libssl-dev kmod
 live-boot live-config
 PACKAGES
 
@@ -49,6 +54,7 @@ else
   # arm64 live ISO boot support is hardware-specific; validate on target boards.
 cat >> config/package-lists/datya.list.chroot <<'PACKAGES'
 linux-image-arm64
+linux-headers-arm64
 PACKAGES
 fi
 

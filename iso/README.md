@@ -2,6 +2,8 @@
 
 This directory contains the first Debian `live-build` configuration for a reproducible Datya Linux live image. It creates an intentionally small cybersecurity-oriented base with AppArmor, encrypted-storage tooling, NetworkManager, local build tooling, and visible Datya policy markers. It does not yet install the Guardian kernel module or all 60+ security tools; those must be added as signed, versioned packages after their adapters and policies are reviewed.
 
+The `0900-install-datya-security.hook.chroot` hook now builds and installs the C++ control daemon and stages the Guardian kernel module for the exact image kernel. See [packaged security components](PACKAGED_SECURITY.md) for the signing and enablement rules.
+
 ## Build
 
 Run on a Debian/Ubuntu build host with root access:
