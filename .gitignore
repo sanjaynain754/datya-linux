@@ -1,0 +1,7 @@
+# Local signing material must never enter version control.
+security/signing/*.priv
+security/signing/*.key
+security/signing/*.pem
+security/signing/*.der
+*.ko
+*.ko.unsigned-backup
