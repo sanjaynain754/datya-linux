@@ -1,0 +1,12 @@
+[package]
+name = "datya-tool-adapters"
+version = "0.1.0"
+edition = "2021"
+description = "Policy-controlled, scope-aware adapters for Datya security tools"
+license = "Apache-2.0"
+
+[lib]
+name = "datya_tool_adapters"
+path = "src/lib.rs"
+
+[dependencies]

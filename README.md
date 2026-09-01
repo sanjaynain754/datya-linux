@@ -35,6 +35,8 @@ The `datya-sensor` crate is the first cybersecurity system-sensor layer. It read
 
 The `datya-control-daemon` is the keyboard-first cybersecurity orchestrator. It exposes a modular catalog of 64 security capabilities, supports scope management, defaults to dry-run planning, and blocks network-capable actions unless the target is explicitly authorized. It currently emits action plans; individual tool adapters will be added only with their own permission, timeout, rate-limit, and evidence policies.
 
+The `datya-tool-adapters` crate provides the first adapter policy layer. It executes only fixed allowlisted binaries without a shell, supports dry-run and execute modes, validates scoped targets, enforces a minimum interval between runs, applies a timeout, caps captured output, and writes evidence to a local temporary path. The initial adapters cover `ss`, `ip`, `dig`, and `curl`; additional tools must be added deliberately with a reviewable policy.
+
 ```bash
 cargo run -p guardian
 cargo test --workspace
