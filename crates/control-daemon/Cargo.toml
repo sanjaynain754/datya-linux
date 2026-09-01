@@ -1,0 +1,8 @@
+[package]
+name = "datya-control-daemon"
+version = "0.1.0"
+edition = "2021"
+description = "Scope-aware control daemon and keyboard interface for Datya cybersecurity tools"
+license = "Apache-2.0"
+
+[dependencies]

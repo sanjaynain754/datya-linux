@@ -33,9 +33,20 @@ The `guardian` crate is intentionally read-only and unprivileged. It reports loc
 
 The `datya-sensor` crate is the first cybersecurity system-sensor layer. It reads kernel release, architecture, OS release, CPU model, memory, firmware product information, and Secure Boot state from local procfs/sysfs sources and emits a `datya.system.v1` record. It performs no kernel modification, privilege escalation, packet interception, or remote reporting. Missing firmware fields are reported as `null`, not guessed.
 
+The `datya-control-daemon` is the keyboard-first cybersecurity orchestrator. It exposes a modular catalog of 64 security capabilities, supports scope management, defaults to dry-run planning, and blocks network-capable actions unless the target is explicitly authorized. It currently emits action plans; individual tool adapters will be added only with their own permission, timeout, rate-limit, and evidence policies.
+
 ```bash
 cargo run -p guardian
 cargo test --workspace
+```
+
+Interactive prototype:
+
+```text
+datya> tools
+datya> scope add 10.10.0.10
+datya> run dns-inspect 10.10.0.10
+datya> quit
 ```
 
 The first Developer Workspace runner prototype is available at `tools/datya-runner.py`. It emits one JSON result containing the command, profile, output, exit code, duration, and network policy. For example: `python3 tools/datya-runner.py --profile safe -- python3 -c 'print("hello")'`. The runner applies local resource limits, but it is not yet a complete sandbox; real network isolation requires a configured container or virtual machine.
