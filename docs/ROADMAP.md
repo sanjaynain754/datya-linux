@@ -23,10 +23,14 @@
 
 ## Phase 2A — Developer Workspace
 
-- Add an optional graphical workspace with terminal, editor, project browser, and local result panel.
-- Provide verified, pinned language toolchains and offline-capable package setup.
-- Implement safe, project-scoped execution with timeouts, resource limits, and explicit network consent.
-- Add a disposable lab profile for authorized defensive testing, with clear isolation and audit results.
+The developer workspace is a supporting component of the cybersecurity product, not the primary goal. It will provide the terminal and toolchain needed by the workbench.
+
+## Phase 2B — Cybersecurity Workbench
+
+- Add Learn, Defend, Assess, and Research profiles with visible authorization boundaries.
+- Add assessment scope files, target allowlists, rate limits, and local audit logs.
+- Add process-to-network correlation, event timelines, evidence hashing, and report export.
+- Ship offline training fixtures and a modular catalog of verified security capability groups.
 
 ## Phase 3 — ARM64 and release engineering
 
