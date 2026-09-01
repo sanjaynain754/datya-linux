@@ -1,0 +1,28 @@
+#!/bin/sh
+set -eu
+
+: "${DEBIAN_SUITE:=trixie}"
+: "${DEBIAN_MIRROR:=https://deb.debian.org/debian}"
+: "${ARCHITECTURE:=amd64}"
+
+lb config \
+  --mode debian \
+  --distribution "$DEBIAN_SUITE" \
+  --architectures "$ARCHITECTURE" \
+  --archive-areas "main contrib non-free-firmware" \
+  --mirror-bootstrap "$DEBIAN_MIRROR" \
+  --mirror-chroot "$DEBIAN_MIRROR" \
+  --mirror-binary "$DEBIAN_MIRROR" \
+  --binary-images iso-hybrid \
+  --bootappend-live "boot=live components quiet splash" \
+  --debian-installer none \
+  --apt-recommends false \
+  --apt-indices false \
+  --memtest none \
+  --iso-application "Datya Linux" \
+  --iso-volume "DATYA_LINUX" \
+  --iso-publisher "Datya Linux contributors" \
+  --iso-preparer "Datya reproducible live-build" \
+  --firmware-binary true \
+  --firmware-chroot true \
+  --checksums sha256
