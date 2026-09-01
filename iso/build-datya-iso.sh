@@ -33,7 +33,6 @@ ca-certificates gnupg
 openssh-client
 network-manager
 procps psmisc iproute2 iputils-ping dnsutils curl
-journalctl
 python3
 rustc cargo
 build-essential cmake pkg-config libssl-dev
