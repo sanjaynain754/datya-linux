@@ -1,0 +1,8 @@
+[package]
+name = "guardian"
+version = "0.1.0"
+edition = "2021"
+description = "Read-only local activity signals for Datya Linux"
+license = "Apache-2.0"
+
+[dependencies]
