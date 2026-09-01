@@ -435,10 +435,10 @@ fn run_command(line: &str, state: &mut ControlState) -> bool {
         Some("help") => print_help(),
         Some("tools") => {
             let category = words.next();
-            for tool in CATALOG
-                .iter()
-                .filter(|tool| category.map_or(true, |value| value == tool.category))
-            {
+            for tool in CATALOG.iter().filter(|tool| match category {
+                None => true,
+                Some(value) => value == tool.category,
+            }) {
                 println!(
                     "{:<20} {:<12} network={} {}",
                     tool.id, tool.category, tool.needs_network, tool.description
