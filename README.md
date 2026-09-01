@@ -30,6 +30,8 @@ This repository contains the initial design documents and a small Rust prototype
 
 The `guardian` crate is intentionally read-only and unprivileged. It reports locally visible TCP sockets from procfs when available. It does not block traffic, inspect packet contents, deanonymize users, or claim to identify every tracking attempt.
 
+The `datya-sensor` crate is the first cybersecurity system-sensor layer. It reads kernel release, architecture, OS release, CPU model, memory, firmware product information, and Secure Boot state from local procfs/sysfs sources and emits a `datya.system.v1` record. It performs no kernel modification, privilege escalation, packet interception, or remote reporting. Missing firmware fields are reported as `null`, not guessed.
+
 ```bash
 cargo run -p guardian
 cargo test --workspace

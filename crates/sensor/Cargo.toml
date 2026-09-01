@@ -1,0 +1,16 @@
+[package]
+name = "datya-sensor"
+version = "0.1.0"
+edition = "2021"
+description = "Read-only Linux kernel, hardware, OS, and security evidence collector for Datya"
+license = "Apache-2.0"
+
+[lib]
+name = "datya_sensor"
+path = "src/lib.rs"
+
+[[bin]]
+name = "datya-sensor"
+path = "src/main.rs"
+
+[dependencies]
