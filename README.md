@@ -24,6 +24,7 @@ This repository contains the initial design documents and a small Rust prototype
 - [Developer environment](docs/DEVELOPER_ENVIRONMENT.md)
 - [Cybersecurity Workbench](docs/CYBERSECURITY_WORKBENCH.md)
 - [Secure Boot and kernel sensor](docs/SECURE_BOOT.md)
+- [Defensive hardening](docs/DEFENSIVE_HARDENING.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
 

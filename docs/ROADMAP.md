@@ -44,4 +44,11 @@ The developer workspace is a supporting component of the cybersecurity product, 
 - Prototype delivery method with clear isolation boundaries.
 - Port only stable, documented interfaces; do not promise universal Android compatibility.
 
+## Defensive hardening gates
+
+- Enforce signed kernel modules and lockdown policy when Secure Boot is active.
+- Add measured-boot posture and signed recovery with documented rollback.
+- Add tamper-evident local event chaining for policy, module, persistence, and protected-file events.
+- Test that integrity failures preserve evidence and never silently erase or conceal activity.
+
 A milestone is complete only when its security behavior, limitations, rollback path, and test results are documented.
