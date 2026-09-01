@@ -34,6 +34,8 @@ cargo run -p guardian
 cargo test --workspace
 ```
 
+The first Developer Workspace runner prototype is available at `tools/datya-runner.py`. It emits one JSON result containing the command, profile, output, exit code, duration, and network policy. For example: `python3 tools/datya-runner.py --profile safe -- python3 -c 'print("hello")'`. The runner applies local resource limits, but it is not yet a complete sandbox; real network isolation requires a configured container or virtual machine.
+
 ## Target platforms
 
 The first supported targets are **x86_64** and **aarch64**. Raspberry Pi 5 and modern PCs/laptops are in scope; low-end hardware optimization is not a primary project goal. Apple hardware support will depend on upstream Linux support and device-specific firmware/driver work.
