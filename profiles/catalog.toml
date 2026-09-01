@@ -1,0 +1,39 @@
+version = "1"
+
+[profile.desktop]
+status = "planned"
+summary = "General-purpose desktop, development, administration, and accessibility"
+network_default = "user-controlled"
+
+[profile.security-observe]
+status = "prototype"
+summary = "Read-only local posture and evidence collection"
+network_default = "disabled-unless-scoped"
+
+[profile.security-lab]
+status = "planned"
+summary = "Authorized lab workflows through disposable isolation"
+network_default = "isolated-and-scoped"
+
+[profile.forensics]
+status = "planned"
+summary = "Read-only evidence and timeline workflows"
+network_default = "disabled-by-default"
+
+[profile.wireless-hardware]
+status = "planned"
+summary = "Hardware, wireless, Bluetooth, SDR, and firmware review"
+network_default = "explicit-scope"
+
+[profile.cloud-code]
+status = "prototype"
+summary = "SAST, dependency, SBOM, IaC, and container review"
+network_default = "local-only"
+
+[profile.learning]
+status = "planned"
+summary = "Isolated training labs and guided exercises"
+network_default = "isolated-only"
+
+[capability_metadata]
+required = ["source_url", "license", "version", "checksum", "architectures", "privileges", "network_behavior", "tests", "uninstall_path"]
