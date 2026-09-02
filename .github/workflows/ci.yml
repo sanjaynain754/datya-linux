@@ -51,6 +51,7 @@ jobs:
           bash -n security/signing/enroll-mok.sh
           bash -n tools/issue-collab-token.sh
           python3 -m py_compile tools/datya-collab-server.py
+          python3 -m py_compile tools/datya-debian-sync.py
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 tools/verify-package-manifest.py packages/manifest.json
       - name: Reject private signing material

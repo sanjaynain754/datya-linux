@@ -1,0 +1,20 @@
+[Unit]
+Description=Datya Debian repository metadata synchronization
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=datya-sync
+Group=datya-sync
+WorkingDirectory=/var/lib/datya
+ExecStart=/usr/local/libexec/datya-debian-sync.py --manifest /etc/datya/packages/manifest.json --cache /var/cache/datya/debian-sync --report /var/lib/datya/debian-sync/report.json
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/cache/datya/debian-sync /var/lib/datya/debian-sync
+RestrictAddressFamilies=AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

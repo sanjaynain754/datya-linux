@@ -26,3 +26,19 @@ python3 tools/verify-package-manifest.py --strict packages/manifest.json
 ```
 
 Normal mode validates structure and reports pending records as warnings. Strict mode is a release gate and fails until every record is verified and placeholder metadata is removed. The verifier is metadata-only: it never downloads or installs packages. A release pipeline must separately verify Debian repository signatures, artifact checksums, SBOMs, vulnerability status, and reproducible builds before producing an ISO.
+
+## Automated repository sync
+
+`tools/datya-debian-sync.py` downloads Debian `InRelease`, verifies it with `gpgv` and an explicitly supplied archive keyring, selects the architecture-specific `Packages` index, verifies its SHA-256 and byte size against the signed metadata, and checks every manifest package/version for availability. It writes a JSON report and never installs or upgrades packages.
+
+```bash
+python3 tools/datya-debian-sync.py \
+  --manifest packages/manifest.json \
+  --architecture amd64 \
+  --keyring /usr/share/keyrings/debian-archive-keyring.gpg \
+  --report /var/lib/datya/debian-sync/report.json
+```
+
+The command fails closed when HTTPS, the keyring, the signature, the signed index hash, or the index size is invalid. A report exit status of `1` means metadata was valid but one or more curated versions were unavailable; `2` means a validation or operational error. `--allow-insecure-no-signature` exists only for local development and must not be used in release automation. `--write-manifest` is conservative: it records verified sync metadata only when every requested package is available and never replaces package checksums with unverified values.
+
+For a host with systemd, review and install the example service and timer files under `systemd/`. The timer performs metadata synchronization only; package installation remains a separate reviewed release step.
