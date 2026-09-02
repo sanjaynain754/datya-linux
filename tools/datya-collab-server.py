@@ -187,7 +187,14 @@ class Handler(BaseHTTPRequestHandler):
         token = query.get("token", [""])[0]
         return SESSION.auth(token) if len(token) <= MAX_TOKEN_BYTES else None
     def send_json(self, code, data):
-        raw = json.dumps(data).encode(); self.send_response(code); self.send_header("Content-Type","application/json"); self.send_header("Content-Length",str(len(raw))); self.end_headers(); self.wfile.write(raw)
+        raw = json.dumps(data, separators=(",", ":")).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Content-Length", str(len(raw)))
+        self.end_headers()
+        self.wfile.write(raw)
     def do_GET(self):
         if self.headers.get("Upgrade", "").lower() == "websocket":
             return self.do_UPGRADE()
@@ -197,7 +204,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/health": return self.send_json(200, {"ok":True,"expired":SESSION.expired(),"participants":len(SESSION.users)})
         if path == "/sessions/current/events":
             if not SESSION.active(user): return self.send_json(403, {"error":"join the session first"})
-            self.send_response(200); self.send_header("Content-Type","text/event-stream"); self.send_header("Cache-Control","no-cache"); self.send_header("Connection","keep-alive"); self.end_headers()
+            self.send_response(200); self.send_header("Content-Type","text/event-stream"); self.send_header("Cache-Control","no-store"); self.send_header("X-Content-Type-Options","nosniff"); self.send_header("Connection","keep-alive"); self.end_headers()
             with SESSION.lock: history = list(SESSION.events); SESSION.clients.add(SSEClient(self.wfile, user))
             try:
                 for item in history[-256:]: self.wfile.write((f"id: {item['sequence']}\nevent: session.event\ndata: {json.dumps(item)}\n\n").encode()); self.wfile.flush()
