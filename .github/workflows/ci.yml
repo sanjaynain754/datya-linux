@@ -41,8 +41,11 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - name: Install static-check tools
+        run: sudo apt-get update && sudo apt-get install --yes shellcheck
       - name: Validate shell scripts
         run: |
+          shellcheck --severity=error iso/build-datya-iso.sh iso/auto/config iso/config/hooks/normal/0900-install-datya-security.hook.chroot iso/config/hooks/normal/0950-configure-desktop.hook.chroot security/signing/generate-mok.sh security/signing/sign-module.sh security/signing/enroll-mok.sh tools/issue-collab-token.sh tools/datya-profile.sh tools/datya-security-audit.sh
           bash -n iso/build-datya-iso.sh
           bash -n iso/auto/config
           bash -n iso/config/hooks/normal/0900-install-datya-security.hook.chroot
@@ -53,7 +56,7 @@ jobs:
           bash -n security/signing/enroll-mok.sh
           bash -n tools/issue-collab-token.sh
           python3 -m py_compile tools/datya-collab-server.py
-          python3 -m py_compile tools/datya-debian-sync.py
+          python3 -m py_compile tools/datya-debian-sync.py tools/datya-runner.py
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 tools/verify-package-manifest.py packages/manifest.json
           grep -q -- '--debian-installer live' iso/auto/config
