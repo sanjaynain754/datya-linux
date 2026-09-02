@@ -5,7 +5,7 @@ Prototype boundary: this server emits policy plans; it never executes shell comm
 Use TLS in every non-local deployment and provide DATYA_COLLAB_SECRET.
 """
 from __future__ import annotations
-import base64, hashlib, hmac, json, os, secrets, socket, ssl, struct, threading, time
+import base64, fcntl, hashlib, hmac, json, os, secrets, socket, ssl, struct, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
@@ -22,26 +22,55 @@ REVOCATION_FILE = os.getenv("DATYA_REVOCATION_FILE", "")
 class Revocations:
     def __init__(self, path):
         self.path = path; self.users = set(); self.lock = threading.RLock()
-        if path and os.path.exists(path):
-            with open(path, "r", encoding="utf-8") as stream: self.users = {line.strip() for line in stream if line.strip()}
+        self.lock_path = f"{path}.lock" if path else ""
+        self._reload()
+    def _reload(self):
+        if not self.path: return
+        os.makedirs(os.path.dirname(self.path) or ".", exist_ok=True)
+        fd = os.open(self.lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+        try:
+            fcntl.flock(fd, fcntl.LOCK_SH)
+            if os.path.exists(self.path):
+                with open(self.path, "r", encoding="utf-8") as stream: self.users = {line.strip() for line in stream if line.strip()}
+        finally:
+            fcntl.flock(fd, fcntl.LOCK_UN); os.close(fd)
     def add(self, user):
         with self.lock:
-            self.users.add(user)
-            if not self.path: return
+            if not self.path:
+                self.users.add(user); return
             os.makedirs(os.path.dirname(self.path) or ".", exist_ok=True)
-            fd = os.open(self.path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
-            try: os.write(fd, (user + "\n").encode()); os.fsync(fd)
-            finally: os.close(fd)
+            lock_fd = os.open(self.lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+            try:
+                fcntl.flock(lock_fd, fcntl.LOCK_EX)
+                if os.path.exists(self.path):
+                    with open(self.path, "r", encoding="utf-8") as stream: self.users = {line.strip() for line in stream if line.strip()}
+                if user not in self.users:
+                    fd = os.open(self.path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+                    try: os.write(fd, (user + "\n").encode()); os.fsync(fd)
+                    finally: os.close(fd)
+                    self.users.add(user)
+            finally:
+                fcntl.flock(lock_fd, fcntl.LOCK_UN); os.close(lock_fd)
     def contains(self, user):
-        with self.lock: return user in self.users
+        with self.lock:
+            self._reload()
+            return user in self.users
 
 class PersistentEventLog:
     def __init__(self, path):
-        self.path = path; self.previous = "0" * 64; self.sequence = 0; self.events = []
+        self.path = path; self.lock_path = f"{path}.lock" if path else ""; self.previous = "0" * 64; self.sequence = 0; self.events = []
         if not path: return
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-        if not os.path.exists(path): return
-        with open(path, "r", encoding="utf-8") as stream:
+        lock_fd = os.open(self.lock_path, os.O_RDWR | os.O_CREAT, 0o600)
+        try:
+            fcntl.flock(lock_fd, fcntl.LOCK_SH)
+            self._load()
+        finally:
+            fcntl.flock(lock_fd, fcntl.LOCK_UN); os.close(lock_fd)
+    def _load(self):
+        self.previous = "0" * 64; self.sequence = 0; self.events = []
+        if not os.path.exists(self.path): return
+        with open(self.path, "r", encoding="utf-8") as stream:
             for raw in stream:
                 line = raw.rstrip("\n")
                 fields = line.split("\t")
@@ -50,16 +79,21 @@ class PersistentEventLog:
                 self.events.append(json.loads(fields[3]))
                 self.previous = fields[5]; self.sequence += 1
     def append(self, event):
-        if not self.path: return
-        payload = json.dumps(event, separators=(",", ":"), ensure_ascii=True).replace("\t", "\\t").replace("\n", "\\n")
-        material = f"{self.sequence}\t{event['timestamp']}\tcollaboration\t{payload}\t{self.previous}"
-        digest = hashlib.sha256(material.encode()).hexdigest(); record = f"{material}\t{digest}\n"
-        flags = os.O_WRONLY | os.O_CREAT | os.O_APPEND
-        fd = os.open(self.path, flags, 0o600)
+        if not self.path: return event["sequence"]
+        lock_fd = os.open(self.lock_path, os.O_RDWR | os.O_CREAT, 0o600)
         try:
-            os.write(fd, record.encode()); os.fsync(fd)
-        finally: os.close(fd)
-        self.previous = digest; self.sequence += 1
+            fcntl.flock(lock_fd, fcntl.LOCK_EX); self._load()
+            event["sequence"] = self.sequence
+            payload = json.dumps(event, separators=(",", ":"), ensure_ascii=True).replace("\t", "\\t").replace("\n", "\\n")
+            material = f"{self.sequence}\t{event['timestamp']}\tcollaboration\t{payload}\t{self.previous}"
+            digest = hashlib.sha256(material.encode()).hexdigest(); record = f"{material}\t{digest}\n"
+            fd = os.open(self.path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+            try: os.write(fd, record.encode()); os.fsync(fd)
+            finally: os.close(fd)
+            self.previous = digest; self.sequence += 1; self.events.append(event)
+            return event["sequence"]
+        finally:
+            fcntl.flock(lock_fd, fcntl.LOCK_UN); os.close(lock_fd)
 
 class Session:
     def __init__(self):
@@ -70,7 +104,7 @@ class Session:
     def event(self, actor, name, command_id=None, message=""):
         with self.lock:
             item = {"type":"session.event", "sequence":self.seq, "timestamp":int(time.time()), "actor_id":actor, "event":name, "command_id":command_id, "message":message[:512]}
-            self.log.append(item); self.seq += 1; self.events.append(item); clients = list(self.clients)
+            item["sequence"] = self.log.append(item); self.seq = item["sequence"] + 1; self.events.append(item); clients = list(self.clients)
         payload = json.dumps(item, separators=(",", ":"))
         for client in clients:
             try: client.send_event(payload)

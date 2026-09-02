@@ -73,4 +73,6 @@ The automated suite covers TLS WebSocket upgrade, masked client frames, server e
 
 Set `DATYA_REVOCATION_FILE=/var/lib/datya/revoked-participants` to persist participant revocations with mode `0600`. Removing a participant immediately marks the identity revoked, closes matching WebSocket connections with close code `1008` (policy violation), and rejects all future tokens for that identity, including after restart. Rotate the signing secret to invalidate every token globally.
 
+Both files use a sibling `*.lock` file and POSIX `flock`: readers take a shared lock, writers take an exclusive lock, reload state while holding it, append, and call `fsync` before releasing it. The event log assigns the final sequence number while holding the lock, so separate server processes cannot publish duplicate sequence numbers. The multi-process stress tests cover concurrent writers for both files.
+
 The transport requires masked client frames, rejects RSV bits, rejects oversized/control-fragmented frames, responds to WebSocket `PING` with `PONG`, echoes a valid close frame, and closes malformed text with `1007` or protocol violations with `1002`. It does not execute arbitrary commands.
