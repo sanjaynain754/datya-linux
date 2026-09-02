@@ -62,3 +62,9 @@ sudo DATYA_COLLAB_SECRET='use-a-protected-secret-store' \
 ```
 
 Issue a participant token with `tools/issue-collab-token.sh`; the reference server enforces its embedded expiry. Do not put the secret in shell history, Git, an ISO, or a public process listing. The Python server is a reference implementation, not a complete production identity provider; production deployments still need signed tokens, revocation, rate limiting, structured redaction, secret rotation, and security review.
+
+## Persistent event log
+
+Set `DATYA_EVENT_LOG=/var/lib/datya/collaboration-events.log` to enable a local append-only SHA-256 hash chain. Each record uses the same six-field format as the C++ `EventLog`: sequence, timestamp, type, JSON payload, previous hash, and current hash. The server validates the complete chain at startup, appends with `fsync`, and replays validated events to new SSE clients after a restart. A corrupt log prevents startup rather than silently continuing from an untrusted state.
+
+The automated suite covers TLS WebSocket upgrade, masked client frames, server event frames, malformed JSON resilience, scope enforcement, four-user limits, token rejection, and hash-chain records.

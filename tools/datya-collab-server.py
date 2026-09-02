@@ -16,16 +16,44 @@ SCOPE = {x for x in os.environ.get("DATYA_SCOPE", "127.0.0.1").split(",") if x}
 PORT = int(os.getenv("DATYA_COLLAB_PORT", "9443"))
 CERT = os.getenv("DATYA_TLS_CERT", "/etc/datya/tls/server.crt")
 KEY = os.getenv("DATYA_TLS_KEY", "/etc/datya/tls/server.key")
+EVENT_LOG = os.getenv("DATYA_EVENT_LOG", "")
+
+class PersistentEventLog:
+    def __init__(self, path):
+        self.path = path; self.previous = "0" * 64; self.sequence = 0; self.events = []
+        if not path: return
+        os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+        if not os.path.exists(path): return
+        with open(path, "r", encoding="utf-8") as stream:
+            for raw in stream:
+                line = raw.rstrip("\n")
+                fields = line.split("\t")
+                if len(fields) != 6 or fields[0] != str(self.sequence) or fields[4] != self.previous or hashlib.sha256("\t".join(fields[:5]).encode()).hexdigest() != fields[5]:
+                    raise ValueError("persistent event log hash chain is invalid")
+                self.events.append(json.loads(fields[3]))
+                self.previous = fields[5]; self.sequence += 1
+    def append(self, event):
+        if not self.path: return
+        payload = json.dumps(event, separators=(",", ":"), ensure_ascii=True).replace("\t", "\\t").replace("\n", "\\n")
+        material = f"{self.sequence}\t{event['timestamp']}\tcollaboration\t{payload}\t{self.previous}"
+        digest = hashlib.sha256(material.encode()).hexdigest(); record = f"{material}\t{digest}\n"
+        flags = os.O_WRONLY | os.O_CREAT | os.O_APPEND
+        fd = os.open(self.path, flags, 0o600)
+        try:
+            os.write(fd, record.encode()); os.fsync(fd)
+        finally: os.close(fd)
+        self.previous = digest; self.sequence += 1
 
 class Session:
     def __init__(self):
         self.lock = threading.RLock(); self.created = int(time.time()); self.events = []
-        self.users = {}; self.commands = {}; self.clients = set(); self.seq = 0
+        self.users = {}; self.commands = {}; self.clients = set(); self.seq = 0; self.log = PersistentEventLog(EVENT_LOG)
+        if EVENT_LOG and self.log.sequence: self.seq = self.log.sequence; self.events = list(self.log.events)
     def expired(self): return int(time.time()) >= self.created + SESSION_TTL
     def event(self, actor, name, command_id=None, message=""):
         with self.lock:
             item = {"type":"session.event", "sequence":self.seq, "timestamp":int(time.time()), "actor_id":actor, "event":name, "command_id":command_id, "message":message[:512]}
-            self.seq += 1; self.events.append(item); clients = list(self.clients)
+            self.log.append(item); self.seq += 1; self.events.append(item); clients = list(self.clients)
         payload = json.dumps(item, separators=(",", ":"))
         for client in clients:
             try: client.send_event(payload)
@@ -140,9 +168,11 @@ class Handler(BaseHTTPRequestHandler):
         key = self.headers.get("Sec-WebSocket-Key");
         if not key: return self.send_json(400,{"error":"websocket key required"})
         client = WSClient(self.connection, self.rfile, self.wfile, user)
-        try: SESSION.add(client)
-        except ValueError as exc: return self.send_json(409,{"error":str(exc)})
         self.send_response(101); self.send_header("Upgrade","websocket"); self.send_header("Connection","Upgrade"); self.send_header("Sec-WebSocket-Accept",ws_accept(key)); self.end_headers()
+        try: SESSION.add(client)
+        except ValueError:
+            self.connection.close()
+            return
         try:
             while not SESSION.expired():
                 raw = read_frame(self.rfile)
