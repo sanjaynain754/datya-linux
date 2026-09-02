@@ -7,3 +7,4 @@ security/signing/*.der
 *.ko.unsigned-backup
 target/
 build/
+__pycache__/

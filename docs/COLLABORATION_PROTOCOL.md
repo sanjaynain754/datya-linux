@@ -47,3 +47,16 @@ data: {"sequence":12,"actor_id":"u-1","event":"command.started","command_id":"cm
 SSE is for visibility, not command execution. The server must enforce per-participant filtering, heartbeat timeouts, replay-from-sequence, and an explicit `session.expired` event.
 
 The transport does not grant system privileges. Actual work continues through Datya's fixed adapter allowlist, explicit scope, dry-run default, timeout, rate-limit, output cap, and append-only event log.
+
+## Reference server
+
+`tools/datya-collab-server.py` is a small TLS 1.3 reference transport for local integration tests. Set a strong `DATYA_COLLAB_SECRET`, provide `DATYA_TLS_CERT` and `DATYA_TLS_KEY`, and bind to `127.0.0.1` unless the LAN exposure has been reviewed:
+
+```bash
+sudo DATYA_COLLAB_SECRET='use-a-protected-secret-store' \
+  DATYA_TLS_CERT=/etc/datya/tls/server.crt \
+  DATYA_TLS_KEY=/etc/datya/tls/server.key \
+  ./tools/datya-collab-server.py
+```
+
+Issue a participant token with `tools/issue-collab-token.sh`; the reference server enforces its embedded expiry. Do not put the secret in shell history, Git, an ISO, or a public process listing. The Python server is a reference implementation, not a complete production identity provider; production deployments still need signed tokens, revocation, rate limiting, structured redaction, secret rotation, and security review.

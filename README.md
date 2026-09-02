@@ -35,6 +35,8 @@ GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, 
 - [Roadmap](docs/ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
 - [Dashboard prototype](dashboard/README.md)
+- [Collaboration server](tools/datya-collab-server.py)
+- [Collaboration token issuer](tools/issue-collab-token.sh)
 
 ## Prototype
 

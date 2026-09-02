@@ -1,0 +1,23 @@
+[Unit]
+Description=Datya TLS collaboration transport reference server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/lib/datya/datya-collab-server.py
+EnvironmentFile=-/etc/datya/collab.env
+User=datya-guardian
+Group=datya-guardian
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=read-only
+PrivateDevices=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+ReadWritePaths=/var/lib/datya
+CapabilityBoundingSet=
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
