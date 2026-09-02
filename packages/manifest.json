@@ -1,0 +1,49 @@
+{
+  "schema_version": "datya.package.v1",
+  "base": {"distribution": "debian", "suite": "trixie", "architectures": ["amd64", "arm64"], "repository_policy": "official-signed-only"},
+  "channels": {"stable": {"promotion": "reviewed-and-tested"}, "testing": {"promotion": "automated-checks"}, "experimental": {"promotion": "maintainer-review"}},
+  "packages": [
+    {
+      "name": "apparmor",
+      "binary_version": "3.1.7-1+b1",
+      "source_package": "apparmor",
+      "source_version": "3.1.7-1",
+      "channel": "stable",
+      "architectures": ["amd64", "arm64"],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/apparmor",
+      "license": "GPL-2.0-or-later",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "privileges": ["system-service"],
+      "network_behavior": "none",
+      "profiles": ["desktop", "security-observe"],
+      "status": "catalogued",
+      "verification_status": "pending",
+      "tests": ["package-install", "service-posture"],
+      "uninstall_path": "apt remove apparmor",
+      "maintainer": "Datya package team",
+      "notes": "Placeholder checksum: replace with the signed artifact checksum before packaging."
+    },
+    {
+      "name": "iproute2",
+      "binary_version": "6.12.0-1",
+      "source_package": "iproute2",
+      "source_version": "6.12.0-1",
+      "channel": "stable",
+      "architectures": ["amd64", "arm64"],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/iproute2",
+      "license": "GPL-2.0-or-later",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "privileges": ["read-network-state"],
+      "network_behavior": "reads-local-state",
+      "profiles": ["security-observe", "wireless-hardware"],
+      "status": "catalogued",
+      "verification_status": "pending",
+      "tests": ["package-install", "read-only-adapter"],
+      "uninstall_path": "apt remove iproute2",
+      "maintainer": "Datya package team",
+      "notes": "Placeholder checksum: replace with the signed artifact checksum before packaging."
+    }
+  ]
+}
