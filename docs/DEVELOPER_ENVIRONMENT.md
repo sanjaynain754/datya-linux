@@ -33,6 +33,8 @@ The default runner should use an unprivileged user, a temporary filesystem, CPU/
 
 Each run should record a local manifest containing the toolchain versions, dependency lockfile hash, command, profile, and result. Logs are stored locally under user-selected retention settings. The user can disable retention or delete a project's logs. A result is useful only when it is reproducible; the UI should distinguish a compiler/test result from a heuristic security finding.
 
+The reference runner enforces CPU, address-space, process-count, file-descriptor, timeout, output-size, and process-group limits. The `safe` and `project` profiles fail closed unless `bubblewrap` is installed, then use a separate filesystem view and a network namespace for network-disabled runs. The `lab` profile intentionally provides resource limits only and must be used inside a disposable VM or container; an environment variable is never treated as network isolation.
+
 ## Customization
 
 The workspace is built from packages and declarative configuration. Communities can publish themes, language packs, editor integrations, policy profiles, and downstream images. Datya does not lock users into one editor or language. Security defaults should be easy to understand and hard to change accidentally, but never hidden from advanced users.
