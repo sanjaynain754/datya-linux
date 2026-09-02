@@ -56,10 +56,11 @@ jobs:
           bash -n security/signing/enroll-mok.sh
           bash -n tools/issue-collab-token.sh
           python3 -m py_compile tools/datya-collab-server.py
-          python3 -m py_compile tools/datya-debian-sync.py tools/datya-runner.py tools/datya-tool-catalog.py
+          python3 -m py_compile tools/datya-debian-sync.py tools/datya-runner.py tools/datya-tool-catalog.py tools/datya-install-pack.py
           python3 -c 'import tomllib; tomllib.load(open("profiles/tool-packs.toml", "rb"))'
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 tools/datya-tool-catalog.py --list
+          python3 tools/datya-install-pack.py --pack observe >/tmp/datya-install-plan.json || test $? -eq 1
           python3 tools/verify-package-manifest.py packages/manifest.json
           grep -q -- '--debian-installer live' iso/auto/config
           grep -q 'xfce4' iso/build-datya-iso.sh

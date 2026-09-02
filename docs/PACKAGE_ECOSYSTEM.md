@@ -41,4 +41,21 @@ python3 tools/datya-debian-sync.py \
 
 The command fails closed when HTTPS, the keyring, the signature, the signed index hash, or the index size is invalid. A report exit status of `1` means metadata was valid but one or more curated versions were unavailable; `2` means a validation or operational error. `--allow-insecure-no-signature` exists only for local development and must not be used in release automation. `--write-manifest` is conservative: it records verified sync metadata only when every requested package is available and never replaces package checksums with unverified values.
 
+## Curated pack installation
+
+`tools/datya-install-pack.py` resolves a named pack against both `profiles/tool-packs.toml` and the package manifest. It refuses packages that are absent, pending verification, missing a real SHA-256, unsupported on the host architecture, or served from a non-HTTPS repository. Without `--install`, it performs a dry-run and changes nothing. With `--verify-only`, it downloads each exact Debian artifact and compares its SHA-256 before returning success. Installation requires both root privileges and the explicit `--yes` confirmation.
+
+```bash
+# Resolve and validate only; expected to fail until every catalog entry is verified.
+python3 tools/datya-install-pack.py --pack observe
+
+# Download exact artifacts and verify checksums, without installing.
+sudo python3 tools/datya-install-pack.py --pack observe --verify-only
+
+# Install only after metadata and artifact verification pass.
+sudo python3 tools/datya-install-pack.py --pack observe --install --yes
+```
+
+The six packs are intentionally not installed wholesale. The current catalog contains tools that still need individual manifest records, exact Debian versions, real artifact checksums, licenses, privilege declarations, and installation tests. This is a deliberate release gate rather than an error: a pack becomes installable only after its complete provenance record is reviewed. `--all` resolves all packs but will remain blocked while any entry is unverified.
+
 For a host with systemd, review and install the example service and timer files under `systemd/`. The timer performs metadata synchronization only; package installation remains a separate reviewed release step.
