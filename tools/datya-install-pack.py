@@ -16,6 +16,13 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from urllib.request import urlopen
+
+
+def host_architecture() -> str:
+    result = subprocess.run(["dpkg", "--print-architecture"], capture_output=True, text=True, check=False)
+    architecture = result.stdout.strip() if result.returncode == 0 else ""
+    return architecture if architecture in {"amd64", "arm64"} else ("amd64" if os.uname().machine == "x86_64" else "arm64" if os.uname().machine == "aarch64" else "")
 import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -63,21 +70,24 @@ def resolve(pack_name: str | None, all_packs: bool, packs: dict, manifest: dict)
     return names, errors
 
 
-def verify_downloads(names: list[str], manifest: dict, directory: Path) -> list[Path]:
+def verify_downloads(names: list[str], manifest: dict, directory: Path, architecture: str) -> list[Path]:
     downloaded: list[Path] = []
     for name in names:
         record = manifest[name]
         version = record["binary_version"]
-        command = ["apt-get", "download", f"{name}={version}"]
-        result = subprocess.run(command, cwd=directory, capture_output=True, text=True, check=False)
-        if result.returncode != 0:
-            raise RuntimeError(f"could not download {name}={version}: {result.stderr.strip()}")
-        candidates = list(directory.glob(f"{name}_*.deb"))
-        if not candidates:
-            raise RuntimeError(f"apt-get download produced no .deb for {name}={version}")
-        package = max(candidates, key=lambda path: path.stat().st_mtime)
+        artifact = record["artifacts"][architecture]
+        filename = Path(artifact["filename"])
+        if filename.is_absolute() or ".." in filename.parts or filename.suffix != ".deb":
+            raise RuntimeError(f"invalid artifact filename for {name}")
+        package = directory / filename.name
+        url = record["repository"].rstrip("/") + "/" + artifact["filename"]
+        try:
+            with urlopen(url, timeout=30) as response, package.open("wb") as output:
+                shutil.copyfileobj(response, output)
+        except OSError as exc:
+            raise RuntimeError(f"could not download {name}={version}: {exc}") from exc
+        expected = str(artifact["sha256"]).lower()
         digest = hashlib.sha256(package.read_bytes()).hexdigest()
-        expected = str(record["sha256"]).lower()
         if digest != expected:
             raise RuntimeError(f"checksum mismatch for {package.name}: expected {expected}, got {digest}")
         downloaded.append(package)
@@ -126,10 +136,17 @@ def main() -> int:
     if shutil.which("apt-get") is None:
         print("apt-get is required for artifact verification/install", file=sys.stderr)
         return 2
+    architecture = host_architecture()
+    if not architecture:
+        print("unsupported host architecture; expected amd64 or arm64", file=sys.stderr)
+        return 2
+    if any(architecture not in manifest[name].get("artifacts", {}) for name in names):
+        print(f"manifest has no artifact for host architecture: {architecture}", file=sys.stderr)
+        return 1
     with tempfile.TemporaryDirectory(prefix="datya-pack-") as temp:
         directory = Path(temp)
         try:
-            packages = verify_downloads(names, manifest, directory)
+            packages = verify_downloads(names, manifest, directory, architecture)
             print(f"artifact verification passed: {len(packages)} package(s)")
             if args.verify_only:
                 return 0

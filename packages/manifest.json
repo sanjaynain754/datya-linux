@@ -1,49 +1,1707 @@
 {
   "schema_version": "datya.package.v1",
-  "base": {"distribution": "debian", "suite": "trixie", "architectures": ["amd64", "arm64"], "repository_policy": "official-signed-only"},
-  "channels": {"stable": {"promotion": "reviewed-and-tested"}, "testing": {"promotion": "automated-checks"}, "experimental": {"promotion": "maintainer-review"}},
+  "provenance": {
+    "metadata_url": "https://deb.debian.org/debian/dists/trixie/InRelease",
+    "packages_indexes": {
+      "amd64": "https://deb.debian.org/debian/dists/trixie/main/binary-amd64/Packages.xz",
+      "arm64": "https://deb.debian.org/debian/dists/trixie/main/binary-arm64/Packages.xz"
+    },
+    "archive_key_fingerprint": "04B54C3CDCA79751B16BC6B5225629DF75B188BD",
+    "verification_method": "gpgv Good/Valid signature plus signed index SHA-256 and size comparison",
+    "metadata_timestamp": "2026-07-11T09:04:12Z"
+  },
+  "base": {
+    "distribution": "debian",
+    "suite": "trixie",
+    "architectures": [
+      "amd64",
+      "arm64"
+    ],
+    "repository_policy": "official-signed-only"
+  },
+  "channels": {
+    "stable": {
+      "promotion": "reviewed-and-tested"
+    },
+    "testing": {
+      "promotion": "automated-checks"
+    },
+    "experimental": {
+      "promotion": "maintainer-review"
+    }
+  },
   "packages": [
     {
-      "name": "apparmor",
-      "binary_version": "3.1.7-1+b1",
-      "source_package": "apparmor",
-      "source_version": "3.1.7-1",
+      "name": "aircrack-ng",
+      "binary_version": "1:1.7+git20230807.4bf83f1a-2",
+      "source_package": "aircrack-ng",
+      "source_version": "1:1.7+git20230807.4bf83f1a-2",
       "channel": "stable",
-      "architectures": ["amd64", "arm64"],
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
       "repository": "https://deb.debian.org/debian",
-      "source_url": "https://packages.debian.org/trixie/apparmor",
-      "license": "GPL-2.0-or-later",
-      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "privileges": ["system-service"],
+      "source_url": "https://packages.debian.org/trixie/aircrack-ng",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "e8e7c267a6bc285dbcccaf1aaf879bfdfad0e60b81050ceca923bac75b7d55e9",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/a/aircrack-ng/aircrack-ng_1.7+git20230807.4bf83f1a-2_amd64.deb",
+          "size": 554420,
+          "sha256": "e8e7c267a6bc285dbcccaf1aaf879bfdfad0e60b81050ceca923bac75b7d55e9"
+        },
+        "arm64": {
+          "filename": "pool/main/a/aircrack-ng/aircrack-ng_1.7+git20230807.4bf83f1a-2_arm64.deb",
+          "size": 509128,
+          "sha256": "afd0642b864a2bdc586135e117582746776089bf6894c74ea62f7acdd88f1c1b"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
       "network_behavior": "none",
-      "profiles": ["desktop", "security-observe"],
+      "profiles": [
+        "wireless-hardware"
+      ],
       "status": "catalogued",
-      "verification_status": "pending",
-      "tests": ["package-install", "service-posture"],
-      "uninstall_path": "apt remove apparmor",
-      "maintainer": "Datya package team",
-      "notes": "Placeholder checksum: replace with the signed artifact checksum before packaging."
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove aircrack-ng",
+      "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "apparmor-utils",
+      "binary_version": "4.1.0-1",
+      "source_package": "apparmor",
+      "source_version": "4.1.0-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/apparmor-utils",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "1f01704e8cffb596ac1d72914ac82c794f98681a5edaf86e84a5f0335d46dbd4",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/a/apparmor/apparmor-utils_4.1.0-1_all.deb",
+          "size": 113400,
+          "sha256": "1f01704e8cffb596ac1d72914ac82c794f98681a5edaf86e84a5f0335d46dbd4"
+        },
+        "arm64": {
+          "filename": "pool/main/a/apparmor/apparmor-utils_4.1.0-1_all.deb",
+          "size": 113400,
+          "sha256": "1f01704e8cffb596ac1d72914ac82c794f98681a5edaf86e84a5f0335d46dbd4"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "security-observe"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove apparmor-utils",
+      "maintainer": "Debian AppArmor Team <pkg-apparmor-team@lists.alioth.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "auditd",
+      "binary_version": "1:4.0.2-2+b2",
+      "source_package": "audit",
+      "source_version": "1:4.0.2-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/auditd",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "cc21921dca59894879ba9fef423b2f5ad978b755d3bdd9d8512e8f6672d9a439",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/a/audit/auditd_4.0.2-2+b2_amd64.deb",
+          "size": 216860,
+          "sha256": "cc21921dca59894879ba9fef423b2f5ad978b755d3bdd9d8512e8f6672d9a439"
+        },
+        "arm64": {
+          "filename": "pool/main/a/audit/auditd_4.0.2-2+b2_arm64.deb",
+          "size": 206832,
+          "sha256": "efff38b2f8ac78611b0330176bfc13e277885ef88e2fe2b45f5f1767c40670e8"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "security-observe"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove auditd",
+      "maintainer": "Laurent Bigonville <bigon@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "binwalk",
+      "binary_version": "2.4.3+dfsg1-2",
+      "source_package": "binwalk",
+      "source_version": "2.4.3+dfsg1-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/binwalk",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "b614f9bf842173f363836d423ee9a8d1e223f9479d0f1674e95716ec1adf6c15",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/b/binwalk/binwalk_2.4.3+dfsg1-2_all.deb",
+          "size": 6184,
+          "sha256": "b614f9bf842173f363836d423ee9a8d1e223f9479d0f1674e95716ec1adf6c15"
+        },
+        "arm64": {
+          "filename": "pool/main/b/binwalk/binwalk_2.4.3+dfsg1-2_all.deb",
+          "size": 6184,
+          "sha256": "b614f9bf842173f363836d423ee9a8d1e223f9479d0f1674e95716ec1adf6c15"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "forensics"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove binwalk",
+      "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "bluez",
+      "binary_version": "5.82-1.1",
+      "source_package": "bluez",
+      "source_version": "5.82-1.1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/bluez",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "64a680d95abb11cf02f8170b2d57115dbdee4738a6163c2cf25021f546bce8ac",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/b/bluez/bluez_5.82-1.1_amd64.deb",
+          "size": 1407164,
+          "sha256": "64a680d95abb11cf02f8170b2d57115dbdee4738a6163c2cf25021f546bce8ac"
+        },
+        "arm64": {
+          "filename": "pool/main/b/bluez/bluez_5.82-1.1_arm64.deb",
+          "size": 1279600,
+          "sha256": "be1d24dd87fd6cd1b45431cd517bf103fffec026aee42fbeab3533633b546ac4"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "wireless-hardware"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove bluez",
+      "maintainer": "Debian Bluetooth Maintainers <team+pkg-bluetooth@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "cargo",
+      "binary_version": "1.85.0+dfsg3-1",
+      "source_package": "rustc",
+      "source_version": "1.85.0+dfsg3-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/cargo",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "04515b777d20b2480e48257e2252e9406aec858c819470ca5442a5de77331d06",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/r/rustc/cargo_1.85.0+dfsg3-1_amd64.deb",
+          "size": 6457132,
+          "sha256": "04515b777d20b2480e48257e2252e9406aec858c819470ca5442a5de77331d06"
+        },
+        "arm64": {
+          "filename": "pool/main/r/rustc/cargo_1.85.0+dfsg3-1_arm64.deb",
+          "size": 5599296,
+          "sha256": "d711aca80040e0145cff6e7d97c31e2052103f4c3f5cad5d52abfb392785e27f"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "cloud-code"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove cargo",
+      "maintainer": "Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "cmake",
+      "binary_version": "3.31.6-2",
+      "source_package": "cmake",
+      "source_version": "3.31.6-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/cmake",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "dee2fc94973325240604ffbca677a3f16b462fb6520946bd81be1ecbac770a02",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/c/cmake/cmake_3.31.6-2_amd64.deb",
+          "size": 11969144,
+          "sha256": "dee2fc94973325240604ffbca677a3f16b462fb6520946bd81be1ecbac770a02"
+        },
+        "arm64": {
+          "filename": "pool/main/c/cmake/cmake_3.31.6-2_arm64.deb",
+          "size": 9905888,
+          "sha256": "983aa00debd072f7bfae69f93b1b9e4628da0a914c3745b9022e4cd60215493b"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "cloud-code"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove cmake",
+      "maintainer": "Debian CMake Team <pkg-cmake-team@lists.alioth.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "curl",
+      "binary_version": "8.14.1-2+deb13u4",
+      "source_package": "curl",
+      "source_version": "8.14.1-2+deb13u4",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/curl",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "7bd23df36e65ca32a5bbd81f67ca311b9e0c122212c70d0733f4e45d745789d2",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/c/curl/curl_8.14.1-2+deb13u4_amd64.deb",
+          "size": 269904,
+          "sha256": "7bd23df36e65ca32a5bbd81f67ca311b9e0c122212c70d0733f4e45d745789d2"
+        },
+        "arm64": {
+          "filename": "pool/main/c/curl/curl_8.14.1-2+deb13u4_arm64.deb",
+          "size": 262448,
+          "sha256": "9881fbb76558c576488c90e0a1cb1cc2d2154b1e39a70dd44e2b736200146afe"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove curl",
+      "maintainer": "Debian Curl Maintainers <team+curl@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "ffuf",
+      "binary_version": "2.1.0-1+b9",
+      "source_package": "ffuf",
+      "source_version": "2.1.0-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/ffuf",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "9c93f4ea8482d9acf5bd9d34e244b3ae873a063b4fa008d5ec3ffd2cafb8216e",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/f/ffuf/ffuf_2.1.0-1+b9_amd64.deb",
+          "size": 3029000,
+          "sha256": "9c93f4ea8482d9acf5bd9d34e244b3ae873a063b4fa008d5ec3ffd2cafb8216e"
+        },
+        "arm64": {
+          "filename": "pool/main/f/ffuf/ffuf_2.1.0-1+b9_arm64.deb",
+          "size": 2597712,
+          "sha256": "8f945d966d0456ee5e9b7b5f1d074c8e2e6a705963ff2f232ecc6be3354a0b06"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove ffuf",
+      "maintainer": "Thiago Andrade Marques <andrade@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "git",
+      "binary_version": "1:2.47.3-0+deb13u1",
+      "source_package": "git",
+      "source_version": "1:2.47.3-0+deb13u1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/git",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "3e35662fd5c46add561703e54031a1d8ad9df45811927689f0a51122b13be722",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/g/git/git_2.47.3-0+deb13u1_amd64.deb",
+          "size": 8861572,
+          "sha256": "3e35662fd5c46add561703e54031a1d8ad9df45811927689f0a51122b13be722"
+        },
+        "arm64": {
+          "filename": "pool/main/g/git/git_2.47.3-0+deb13u1_arm64.deb",
+          "size": 8665568,
+          "sha256": "8c6b1e96b226211260d7814472215a8a1ed38ee37400c421d454391c1807cb5a"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "cloud-code"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove git",
+      "maintainer": "Jonathan Nieder <jrnieder@gmail.com>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "gitleaks",
+      "binary_version": "8.16.0-1+b12",
+      "source_package": "gitleaks",
+      "source_version": "8.16.0-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/gitleaks",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "77da749c812cb875e95bcd7a3dd48cd0ac2420a1c88487f15c996197b81cdfa9",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/g/gitleaks/gitleaks_8.16.0-1+b12_amd64.deb",
+          "size": 2740268,
+          "sha256": "77da749c812cb875e95bcd7a3dd48cd0ac2420a1c88487f15c996197b81cdfa9"
+        },
+        "arm64": {
+          "filename": "pool/main/g/gitleaks/gitleaks_8.16.0-1+b12_arm64.deb",
+          "size": 2346944,
+          "sha256": "8c0f53de2b482aaa30ccb7c23fc083be450fc30903c40721cbc03aae25d55e83"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "cloud-code"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove gitleaks",
+      "maintainer": "Debian Go Packaging Team <team+pkg-go@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "hashdeep",
+      "binary_version": "4.4+git20170824+ds-1",
+      "source_package": "hashdeep",
+      "source_version": "4.4+git20170824+ds-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/hashdeep",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "236c84a1dcdd9b8d4cb2ab7baf79a6d35371d9a0e091bd1db5dee721a8720431",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/h/hashdeep/hashdeep_4.4+git20170824+ds-1_amd64.deb",
+          "size": 142844,
+          "sha256": "236c84a1dcdd9b8d4cb2ab7baf79a6d35371d9a0e091bd1db5dee721a8720431"
+        },
+        "arm64": {
+          "filename": "pool/main/h/hashdeep/hashdeep_4.4+git20170824+ds-1+b1_arm64.deb",
+          "size": 133592,
+          "sha256": "cb6180d39d77101bdcfa1c5bc8ce2797fd69dc09c5ef609de058671bcb0e03ae"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "forensics"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove hashdeep",
+      "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
     },
     {
       "name": "iproute2",
-      "binary_version": "6.12.0-1",
+      "binary_version": "6.15.0-1",
       "source_package": "iproute2",
-      "source_version": "6.12.0-1",
+      "source_version": "6.15.0-1",
       "channel": "stable",
-      "architectures": ["amd64", "arm64"],
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/iproute2",
-      "license": "GPL-2.0-or-later",
-      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-      "privileges": ["read-network-state"],
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "7b2dcade4a83ded723fcab21c5a53c47f29352c9c5e1661a089a1e481b3fb48a",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/i/iproute2/iproute2_6.15.0-1_amd64.deb",
+          "size": 1089184,
+          "sha256": "7b2dcade4a83ded723fcab21c5a53c47f29352c9c5e1661a089a1e481b3fb48a"
+        },
+        "arm64": {
+          "filename": "pool/main/i/iproute2/iproute2_6.15.0-1_arm64.deb",
+          "size": 1049804,
+          "sha256": "6750637e683afeef92690c7a136bace6c277066d644aa0da0adc08e2d6785af6"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
       "network_behavior": "reads-local-state",
-      "profiles": ["security-observe", "wireless-hardware"],
+      "profiles": [
+        "security-observe"
+      ],
       "status": "catalogued",
-      "verification_status": "pending",
-      "tests": ["package-install", "read-only-adapter"],
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
       "uninstall_path": "apt remove iproute2",
-      "maintainer": "Datya package team",
-      "notes": "Placeholder checksum: replace with the signed artifact checksum before packaging."
+      "maintainer": "Debian Kernel Team <debian-kernel@lists.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "iputils-ping",
+      "binary_version": "3:20240905-3",
+      "source_package": "iputils",
+      "source_version": "3:20240905-3",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/iputils-ping",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "a78f6118527796bde8c34d410dda1e5457f4e4e2de080a0b852cd59d7058ef6f",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/i/iputils/iputils-ping_20240905-3_amd64.deb",
+          "size": 51248,
+          "sha256": "a78f6118527796bde8c34d410dda1e5457f4e4e2de080a0b852cd59d7058ef6f"
+        },
+        "arm64": {
+          "filename": "pool/main/i/iputils/iputils-ping_20240905-3_arm64.deb",
+          "size": 50020,
+          "sha256": "b3072df313074159ad7a22f46043d4bac7c36a452a45194fa320574704da5c85"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
+      "network_behavior": "reads-local-state",
+      "profiles": [
+        "security-observe"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove iputils-ping",
+      "maintainer": "Noah Meyerhans <noahm@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "iw",
+      "binary_version": "6.9-1",
+      "source_package": "iw",
+      "source_version": "6.9-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/iw",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "61c0848fe4c98718f1f1ad7526ae4858d91f85e3139f0e723bed4bc2aa729422",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/i/iw/iw_6.9-1_amd64.deb",
+          "size": 106300,
+          "sha256": "61c0848fe4c98718f1f1ad7526ae4858d91f85e3139f0e723bed4bc2aa729422"
+        },
+        "arm64": {
+          "filename": "pool/main/i/iw/iw_6.9-1+b1_arm64.deb",
+          "size": 102332,
+          "sha256": "dcacc4fb0a002b313effb1f5bb81adf14aca83eed9043bc97acf9e8b437c3d93"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "wireless-hardware"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove iw",
+      "maintainer": "Debian Kernel Team <debian-kernel@lists.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "jq",
+      "binary_version": "1.7.1-6+deb13u2",
+      "source_package": "jq",
+      "source_version": "1.7.1-6+deb13u2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/jq",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "c6464bdc20086222fa9295481367e9a52f3fb78120a14089bae5f0d36f1b8a74",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/j/jq/jq_1.7.1-6+deb13u2_amd64.deb",
+          "size": 77760,
+          "sha256": "c6464bdc20086222fa9295481367e9a52f3fb78120a14089bae5f0d36f1b8a74"
+        },
+        "arm64": {
+          "filename": "pool/main/j/jq/jq_1.7.1-6+deb13u2_arm64.deb",
+          "size": 77300,
+          "sha256": "4b64a93ec70ec5639709843dbb3a8721849f84a22eb3b01dde42aec26c93e03b"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "forensics"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove jq",
+      "maintainer": "ChangZhuo Chen (陳昌倬) <czchen@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "lsof",
+      "binary_version": "4.99.4+dfsg-2",
+      "source_package": "lsof",
+      "source_version": "4.99.4+dfsg-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/lsof",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "76ca9b82da6d5dabd66609937675768a593c20c5e544171a2d9544060a1780b7",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/l/lsof/lsof_4.99.4+dfsg-2_amd64.deb",
+          "size": 315732,
+          "sha256": "76ca9b82da6d5dabd66609937675768a593c20c5e544171a2d9544060a1780b7"
+        },
+        "arm64": {
+          "filename": "pool/main/l/lsof/lsof_4.99.4+dfsg-2_arm64.deb",
+          "size": 306172,
+          "sha256": "c15929d5a0263ca10659f6549d9f1037e2d62871837a1819b0d26db0e6807706"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
+      "network_behavior": "reads-local-state",
+      "profiles": [
+        "security-observe"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove lsof",
+      "maintainer": "Andres Salomon <dilinger@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "netcat-openbsd",
+      "binary_version": "1.229-1",
+      "source_package": "netcat-openbsd",
+      "source_version": "1.229-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/netcat-openbsd",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "d24b18012d4567e9b8fce551293a2373c2bfea5373d012d7f7e81bf5bf17b13e",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/n/netcat-openbsd/netcat-openbsd_1.229-1_amd64.deb",
+          "size": 42520,
+          "sha256": "d24b18012d4567e9b8fce551293a2373c2bfea5373d012d7f7e81bf5bf17b13e"
+        },
+        "arm64": {
+          "filename": "pool/main/n/netcat-openbsd/netcat-openbsd_1.229-1_arm64.deb",
+          "size": 41624,
+          "sha256": "d1e1d484a094988bbb7c9d49ff18c58d309c620d467b0c39c53a5b755ca54022"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove netcat-openbsd",
+      "maintainer": "Guilhem Moulin <guilhem@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "nmap",
+      "binary_version": "7.95+dfsg-3",
+      "source_package": "nmap",
+      "source_version": "7.95+dfsg-3",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/nmap",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "517b1c7558b7c1e7bc095fc7ed73432a26bff46e527a8fde9fea9289c9c1ee98",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/n/nmap/nmap_7.95+dfsg-3_amd64.deb",
+          "size": 1930860,
+          "sha256": "517b1c7558b7c1e7bc095fc7ed73432a26bff46e527a8fde9fea9289c9c1ee98"
+        },
+        "arm64": {
+          "filename": "pool/main/n/nmap/nmap_7.95+dfsg-3_arm64.deb",
+          "size": 1869172,
+          "sha256": "bf8305e4630e725a27f6b9f34c2968d6dc564573d4ba8996d1b95937054e5398"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove nmap",
+      "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "procps",
+      "binary_version": "2:4.0.4-9",
+      "source_package": "procps",
+      "source_version": "2:4.0.4-9",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/procps",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "4db90bb6776772fc52585d6b1fbfc52ec2a85480e1b4363b743fbb2ffa2a5375",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/p/procps/procps_4.0.4-9_amd64.deb",
+          "size": 882088,
+          "sha256": "4db90bb6776772fc52585d6b1fbfc52ec2a85480e1b4363b743fbb2ffa2a5375"
+        },
+        "arm64": {
+          "filename": "pool/main/p/procps/procps_4.0.4-9_arm64.deb",
+          "size": 871348,
+          "sha256": "9afd4ad2e8da92322715114fb9555c63ce92f6c72bf72867e76ab2d6a7a3b541"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
+      "network_behavior": "reads-local-state",
+      "profiles": [
+        "security-observe"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove procps",
+      "maintainer": "Craig Small <csmall@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "psmisc",
+      "binary_version": "23.7-2",
+      "source_package": "psmisc",
+      "source_version": "23.7-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/psmisc",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "19e772bca5ad0b28620229fe4f91383044c5c6322c7c50ae46da1c60d73d9960",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/p/psmisc/psmisc_23.7-2_amd64.deb",
+          "size": 266696,
+          "sha256": "19e772bca5ad0b28620229fe4f91383044c5c6322c7c50ae46da1c60d73d9960"
+        },
+        "arm64": {
+          "filename": "pool/main/p/psmisc/psmisc_23.7-2_arm64.deb",
+          "size": 264676,
+          "sha256": "9ebae564434a8fb5f23b770b5810e9e9c887cde32c23498f340db353a629c993"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
+      "network_behavior": "reads-local-state",
+      "profiles": [
+        "security-observe"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove psmisc",
+      "maintainer": "Craig Small <csmall@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "python3",
+      "binary_version": "3.13.5-1",
+      "source_package": "python3-defaults",
+      "source_version": "3.13.5-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/python3",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "c1388174dc7140e6c19a6dd39f8a0dcb38a835cd66c65644e0dded43d5223cb0",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/p/python3-defaults/python3_3.13.5-1_amd64.deb",
+          "size": 28244,
+          "sha256": "c1388174dc7140e6c19a6dd39f8a0dcb38a835cd66c65644e0dded43d5223cb0"
+        },
+        "arm64": {
+          "filename": "pool/main/p/python3-defaults/python3_3.13.5-1_arm64.deb",
+          "size": 28244,
+          "sha256": "8d5be256bf3bb4f07afce1aa86f0595c6939e1a6c2ea939bdcb7b36351cbe021"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "cloud-code"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove python3",
+      "maintainer": "Matthias Klose <doko@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "python3-requests",
+      "binary_version": "2.32.3+dfsg-5+deb13u1",
+      "source_package": "requests",
+      "source_version": "2.32.3+dfsg-5+deb13u1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/python3-requests",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "7d271bd47c6647b16aec9facc656c39eca763062ec392aea615dd6597b8304c2",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/r/requests/python3-requests_2.32.3+dfsg-5+deb13u1_all.deb",
+          "size": 72212,
+          "sha256": "7d271bd47c6647b16aec9facc656c39eca763062ec392aea615dd6597b8304c2"
+        },
+        "arm64": {
+          "filename": "pool/main/r/requests/python3-requests_2.32.3+dfsg-5+deb13u1_all.deb",
+          "size": 72212,
+          "sha256": "7d271bd47c6647b16aec9facc656c39eca763062ec392aea615dd6597b8304c2"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove python3-requests",
+      "maintainer": "Debian Python Team <team+python@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "rfkill",
+      "binary_version": "2.41-5",
+      "source_package": "util-linux",
+      "source_version": "2.41-5",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/rfkill",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "111dbe084482f42ab1221fa68200711d72e097dcece99d74251a54eca5ac509b",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/u/util-linux/rfkill_2.41-5_amd64.deb",
+          "size": 43700,
+          "sha256": "111dbe084482f42ab1221fa68200711d72e097dcece99d74251a54eca5ac509b"
+        },
+        "arm64": {
+          "filename": "pool/main/u/util-linux/rfkill_2.41-5_arm64.deb",
+          "size": 46668,
+          "sha256": "42649a2beb55ebdf73ec4a5b32f760d62128ce43c8b956d628a11ef11c71691c"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "wireless-hardware"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove rfkill",
+      "maintainer": "Chris Hofstaedtler <zeha@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "ripgrep",
+      "binary_version": "14.1.1-1+b4",
+      "source_package": "rust-ripgrep",
+      "source_version": "14.1.1-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/ripgrep",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "7e0c32510c264c31335fe3b9ae37ab76dcd22f7d1627a0a08518a5bf28b17ac2",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/r/rust-ripgrep/ripgrep_14.1.1-1+b4_amd64.deb",
+          "size": 1433568,
+          "sha256": "7e0c32510c264c31335fe3b9ae37ab76dcd22f7d1627a0a08518a5bf28b17ac2"
+        },
+        "arm64": {
+          "filename": "pool/main/r/rust-ripgrep/ripgrep_14.1.1-1+b4_arm64.deb",
+          "size": 1247232,
+          "sha256": "9b4f347ba2320b22cba217cc4b078536596cc6a1409df001fc560ad3fa396609"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "forensics"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove ripgrep",
+      "maintainer": "Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "rustc",
+      "binary_version": "1.85.0+dfsg3-1",
+      "source_package": "rustc",
+      "source_version": "1.85.0+dfsg3-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/rustc",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "3d0c696edbb60dd306b4133b3e28706b69f79bb879b4bfb643578f4f8a2b9682",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/r/rustc/rustc_1.85.0+dfsg3-1_amd64.deb",
+          "size": 3845652,
+          "sha256": "3d0c696edbb60dd306b4133b3e28706b69f79bb879b4bfb643578f4f8a2b9682"
+        },
+        "arm64": {
+          "filename": "pool/main/r/rustc/rustc_1.85.0+dfsg3-1_arm64.deb",
+          "size": 3447240,
+          "sha256": "4e924a47b2bf4d6cbce01c0dafdfc05423062331389356966041e220f98ebd42"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "cloud-code"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove rustc",
+      "maintainer": "Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "shellcheck",
+      "binary_version": "0.10.0-1",
+      "source_package": "shellcheck",
+      "source_version": "0.10.0-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/shellcheck",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "8b207f7d4421a46cec9e377c74d450e1717092b58ae3e7151cd5f85f639065cd",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/s/shellcheck/shellcheck_0.10.0-1_amd64.deb",
+          "size": 4907584,
+          "sha256": "8b207f7d4421a46cec9e377c74d450e1717092b58ae3e7151cd5f85f639065cd"
+        },
+        "arm64": {
+          "filename": "pool/main/s/shellcheck/shellcheck_0.10.0-1_arm64.deb",
+          "size": 4899184,
+          "sha256": "35bffb007a2873c76258647b23110bd7ca8032e168918491e0ce37e8c54365d4"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "cloud-code"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove shellcheck",
+      "maintainer": "Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "sleuthkit",
+      "binary_version": "4.12.1+dfsg-3",
+      "source_package": "sleuthkit",
+      "source_version": "4.12.1+dfsg-3",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/sleuthkit",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "47df7313141f5dd244ed8777cbf9985925c6b161e38293868deb60ca0f324423",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/s/sleuthkit/sleuthkit_4.12.1+dfsg-3_amd64.deb",
+          "size": 362776,
+          "sha256": "47df7313141f5dd244ed8777cbf9985925c6b161e38293868deb60ca0f324423"
+        },
+        "arm64": {
+          "filename": "pool/main/s/sleuthkit/sleuthkit_4.12.1+dfsg-3_arm64.deb",
+          "size": 339052,
+          "sha256": "2396c1365534d29c77b351cdab56da5544e21b43b70c678f392eb897d40d7cf2"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "forensics"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove sleuthkit",
+      "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "socat",
+      "binary_version": "1.8.0.3-1",
+      "source_package": "socat",
+      "source_version": "1.8.0.3-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/socat",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "6ad18d699071c1e0e3b1e9acd020368544369d339607e80b7eca97bcf4f97017",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/s/socat/socat_1.8.0.3-1_amd64.deb",
+          "size": 423388,
+          "sha256": "6ad18d699071c1e0e3b1e9acd020368544369d339607e80b7eca97bcf4f97017"
+        },
+        "arm64": {
+          "filename": "pool/main/s/socat/socat_1.8.0.3-1_arm64.deb",
+          "size": 410608,
+          "sha256": "935b5ea942807ed82507bf585ae4e666937ebf5c910c5bbe6887ea2b22f19a44"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove socat",
+      "maintainer": "Laszlo Boszormenyi (GCS) <gcs@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "strace",
+      "binary_version": "6.13+ds-1",
+      "source_package": "strace",
+      "source_version": "6.13+ds-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/strace",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "cae290b67cf835350a2cde58ca332256fba475784b3e02a9a8677d73eaf47511",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/s/strace/strace_6.13+ds-1_amd64.deb",
+          "size": 1422560,
+          "sha256": "cae290b67cf835350a2cde58ca332256fba475784b3e02a9a8677d73eaf47511"
+        },
+        "arm64": {
+          "filename": "pool/main/s/strace/strace_6.13+ds-1_arm64.deb",
+          "size": 1295248,
+          "sha256": "d793af70a104eb0bd5be466c3043b512f549e7cb27971320a7c9b8f4c6165e55"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
+      "network_behavior": "reads-local-state",
+      "profiles": [
+        "security-observe"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove strace",
+      "maintainer": "Steve McIntyre <93sam@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "tcpdump",
+      "binary_version": "4.99.5-2",
+      "source_package": "tcpdump",
+      "source_version": "4.99.5-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/tcpdump",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "c35a180eb0ee118976c4648473de0beb36788dc2ec6986ab880722f5a9868ba6",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/t/tcpdump/tcpdump_4.99.5-2_amd64.deb",
+          "size": 471048,
+          "sha256": "c35a180eb0ee118976c4648473de0beb36788dc2ec6986ab880722f5a9868ba6"
+        },
+        "arm64": {
+          "filename": "pool/main/t/tcpdump/tcpdump_4.99.5-2_arm64.deb",
+          "size": 440144,
+          "sha256": "46c6c212edf2a1b08f1b3be39a29ada0605aca37b0daa17b346972d6286cdf00"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove tcpdump",
+      "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "testdisk",
+      "binary_version": "7.2-0.1",
+      "source_package": "testdisk",
+      "source_version": "7.2-0.1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/testdisk",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "3479bf5ab228ee0f773a5e3b0b0bc193cec777a0ef836bc066c5592adbee38aa",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/t/testdisk/testdisk_7.2-0.1_amd64.deb",
+          "size": 439636,
+          "sha256": "3479bf5ab228ee0f773a5e3b0b0bc193cec777a0ef836bc066c5592adbee38aa"
+        },
+        "arm64": {
+          "filename": "pool/main/t/testdisk/testdisk_7.2-0.1_arm64.deb",
+          "size": 419428,
+          "sha256": "597eea495ce49c3c1d97ed68d64b4e03c091e0f9b6399b44a8023d8319140518"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "forensics"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove testdisk",
+      "maintainer": "Jean-Michel Kelbert <kelbert@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "tshark",
+      "binary_version": "4.4.16-0+deb13u1",
+      "source_package": "wireshark",
+      "source_version": "4.4.16-0+deb13u1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/tshark",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "82c345d5f6e33a134eeae741c07c059389abcb0bd9871a9c970341cbd196e8b9",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/w/wireshark/tshark_4.4.16-0+deb13u1_amd64.deb",
+          "size": 176520,
+          "sha256": "82c345d5f6e33a134eeae741c07c059389abcb0bd9871a9c970341cbd196e8b9"
+        },
+        "arm64": {
+          "filename": "pool/main/w/wireshark/tshark_4.4.16-0+deb13u1_arm64.deb",
+          "size": 166792,
+          "sha256": "b19307b15e6acbaf067d643bc8ab8c039a541e8ad021d5a300ced2ca4d9203f2"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove tshark",
+      "maintainer": "Balint Reczey <balint@balintreczey.hu>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "usbutils",
+      "binary_version": "1:018-2",
+      "source_package": "usbutils",
+      "source_version": "1:018-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/usbutils",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "091e509e62bebf6a08787faa5db1303d7aeaad443f19a4f9c31be2947fb50446",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/u/usbutils/usbutils_018-2_amd64.deb",
+          "size": 78880,
+          "sha256": "091e509e62bebf6a08787faa5db1303d7aeaad443f19a4f9c31be2947fb50446"
+        },
+        "arm64": {
+          "filename": "pool/main/u/usbutils/usbutils_018-2_arm64.deb",
+          "size": 74404,
+          "sha256": "c815572281459c506b6c69fa6dc6c79d25f0c9d4ba45077dd7e31e27a410047e"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "wireless-hardware"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove usbutils",
+      "maintainer": "Aurelien Jarno <aurel32@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "wget",
+      "binary_version": "1.25.0-2",
+      "source_package": "wget",
+      "source_version": "1.25.0-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/wget",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "5649cad63c781b2dcf5a7b87d70b3bf789291cd0d6bcabc4d521211f94980683",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/w/wget/wget_1.25.0-2_amd64.deb",
+          "size": 984500,
+          "sha256": "5649cad63c781b2dcf5a7b87d70b3bf789291cd0d6bcabc4d521211f94980683"
+        },
+        "arm64": {
+          "filename": "pool/main/w/wget/wget_1.25.0-2_arm64.deb",
+          "size": 970348,
+          "sha256": "b5232cda342e4b6d6f5ebf309d4b1639e722837dd9fa0574997029302288c43b"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove wget",
+      "maintainer": "Noël Köthe <noel@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "whatweb",
+      "binary_version": "0.5.5-1",
+      "source_package": "whatweb",
+      "source_version": "0.5.5-1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/whatweb",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "9a9e233d4a5340e9899b44aada049a5212bfae90a98ad7525b7d109f150afd78",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/w/whatweb/whatweb_0.5.5-1_all.deb",
+          "size": 2306152,
+          "sha256": "9a9e233d4a5340e9899b44aada049a5212bfae90a98ad7525b7d109f150afd78"
+        },
+        "arm64": {
+          "filename": "pool/main/w/whatweb/whatweb_0.5.5-1_all.deb",
+          "size": 2306152,
+          "sha256": "9a9e233d4a5340e9899b44aada049a5212bfae90a98ad7525b7d109f150afd78"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove whatweb",
+      "maintainer": "Laszlo Boszormenyi (GCS) <gcs@debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "wireshark",
+      "binary_version": "4.4.16-0+deb13u1",
+      "source_package": "wireshark",
+      "source_version": "4.4.16-0+deb13u1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/wireshark",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "5ca3e12c5dc88673870469412829e74b3f097c8b78c46e5d46ce5ae3f619846b",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/w/wireshark/wireshark_4.4.16-0+deb13u1_amd64.deb",
+          "size": 4631468,
+          "sha256": "5ca3e12c5dc88673870469412829e74b3f097c8b78c46e5d46ce5ae3f619846b"
+        },
+        "arm64": {
+          "filename": "pool/main/w/wireshark/wireshark_4.4.16-0+deb13u1_arm64.deb",
+          "size": 4415176,
+          "sha256": "b4d16af3a536c817259abd53dd5a45efbcd1e38b595aa406369547df3a9a9bae"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-capable",
+      "profiles": [
+        "security-lab"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove wireshark",
+      "maintainer": "Balint Reczey <balint@balintreczey.hu>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+    },
+    {
+      "name": "xxd",
+      "binary_version": "2:9.1.1230-2",
+      "source_package": "vim",
+      "source_version": "2:9.1.1230-2",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/xxd",
+      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "sha256": "d1ae72a9ae7c3f81a23299422f0f219b55d2a76eb88c78815584983d6b897324",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/v/vim/xxd_9.1.1230-2_amd64.deb",
+          "size": 98752,
+          "sha256": "d1ae72a9ae7c3f81a23299422f0f219b55d2a76eb88c78815584983d6b897324"
+        },
+        "arm64": {
+          "filename": "pool/main/v/vim/xxd_9.1.1230-2_arm64.deb",
+          "size": 98368,
+          "sha256": "292ee513b6e10c774abe05666f5eecedf0f68165f9b5770ee334417ef07b4b38"
+        }
+      },
+      "privileges": [
+        "read-only-observe"
+      ],
+      "network_behavior": "none",
+      "profiles": [
+        "forensics"
+      ],
+      "status": "catalogued",
+      "verification_status": "metadata-verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove xxd",
+      "maintainer": "Debian Vim Maintainers <team+vim@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
     }
   ]
 }

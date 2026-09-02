@@ -6,7 +6,7 @@ from pathlib import Path
 CHANNELS = {"stable", "testing", "experimental"}
 ARCHES = {"amd64", "arm64"}
 HEX64 = re.compile(r"^[0-9a-fA-F]{64}$")
-REQUIRED = {"name", "binary_version", "source_package", "source_version", "channel", "architectures", "repository", "source_url", "license", "sha256", "privileges", "network_behavior", "profiles", "status", "tests", "uninstall_path", "maintainer", "verification_status"}
+REQUIRED = {"name", "binary_version", "source_package", "source_version", "channel", "architectures", "repository", "source_url", "license", "sha256", "artifacts", "privileges", "network_behavior", "profiles", "status", "tests", "uninstall_path", "maintainer", "verification_status"}
 
 def fail(errors, message): errors.append(message)
 def main():
@@ -37,8 +37,19 @@ def main():
             if not str(package.get(field, "")).startswith("https://"): fail(errors, f"{prefix}.{field} must use https")
         if not package.get("license") or package.get("license") == "UNKNOWN": fail(errors, f"{prefix}.license is not acceptable")
         if not HEX64.fullmatch(str(package.get("sha256", ""))): fail(errors, f"{prefix}.sha256 must be 64 lowercase/hex characters")
+        artifacts = package.get("artifacts", {})
+        if not isinstance(artifacts, dict): fail(errors, f"{prefix}.artifacts must be an object")
+        for architecture in ("amd64", "arm64"):
+            artifact = artifacts.get(architecture, {}) if isinstance(artifacts, dict) else {}
+            if not isinstance(artifact, dict) or not HEX64.fullmatch(str(artifact.get("sha256", ""))) or not artifact.get("filename") or int(artifact.get("size", 0)) <= 0:
+                fail(errors, f"{prefix}.artifacts[{architecture}] must include filename, positive size, and SHA-256")
         if package.get("verification_status") != "verified":
             warnings.append(f"{name}: verification_status={package.get('verification_status')}")
+        if "REVIEW-REQUIRED" in str(package.get("license", "")):
+            warnings.append(f"{name}: Debian copyright/license review is pending")
+        amd64_hash = artifacts.get("amd64", {}).get("sha256") if isinstance(artifacts, dict) else None
+        if amd64_hash and amd64_hash != str(package.get("sha256", "")):
+            fail(errors, f"{prefix}.sha256 must match artifacts[amd64].sha256")
         if "placeholder" in str(package.get("notes", "")).lower() or set(str(package.get("sha256", "")).lower()) in ({"a"}, {"b"}):
             warnings.append(f"{name}: placeholder checksum or note")
     if args.strict and warnings: errors.extend(warnings)
