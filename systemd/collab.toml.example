@@ -13,6 +13,8 @@ redact_secrets = true
 max_event_bytes = 4096
 heartbeat_seconds = 15
 replay_window_events = 256
+event_log = "/var/lib/datya/collaboration-events.log"
+revocation_file = "/var/lib/datya/revoked-participants"
 cert_file = "/etc/datya/tls/server.crt"
 key_file = "/etc/datya/tls/server.key"
 # token_issuer and signing keys are supplied by a protected secret store.

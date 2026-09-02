@@ -5,7 +5,7 @@ Prototype boundary: this server emits policy plans; it never executes shell comm
 Use TLS in every non-local deployment and provide DATYA_COLLAB_SECRET.
 """
 from __future__ import annotations
-import base64, hashlib, hmac, json, os, secrets, ssl, struct, threading, time
+import base64, hashlib, hmac, json, os, secrets, socket, ssl, struct, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
@@ -17,6 +17,23 @@ PORT = int(os.getenv("DATYA_COLLAB_PORT", "9443"))
 CERT = os.getenv("DATYA_TLS_CERT", "/etc/datya/tls/server.crt")
 KEY = os.getenv("DATYA_TLS_KEY", "/etc/datya/tls/server.key")
 EVENT_LOG = os.getenv("DATYA_EVENT_LOG", "")
+REVOCATION_FILE = os.getenv("DATYA_REVOCATION_FILE", "")
+
+class Revocations:
+    def __init__(self, path):
+        self.path = path; self.users = set(); self.lock = threading.RLock()
+        if path and os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as stream: self.users = {line.strip() for line in stream if line.strip()}
+    def add(self, user):
+        with self.lock:
+            self.users.add(user)
+            if not self.path: return
+            os.makedirs(os.path.dirname(self.path) or ".", exist_ok=True)
+            fd = os.open(self.path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+            try: os.write(fd, (user + "\n").encode()); os.fsync(fd)
+            finally: os.close(fd)
+    def contains(self, user):
+        with self.lock: return user in self.users
 
 class PersistentEventLog:
     def __init__(self, path):
@@ -47,7 +64,7 @@ class PersistentEventLog:
 class Session:
     def __init__(self):
         self.lock = threading.RLock(); self.created = int(time.time()); self.events = []
-        self.users = {}; self.commands = {}; self.clients = set(); self.seq = 0; self.log = PersistentEventLog(EVENT_LOG)
+        self.users = {}; self.commands = {}; self.clients = set(); self.revoked_tokens = set(); self.revocations = Revocations(REVOCATION_FILE); self.seq = 0; self.log = PersistentEventLog(EVENT_LOG)
         if EVENT_LOG and self.log.sequence: self.seq = self.log.sequence; self.events = list(self.log.events)
     def expired(self): return int(time.time()) >= self.created + SESSION_TTL
     def event(self, actor, name, command_id=None, message=""):
@@ -71,13 +88,24 @@ class Session:
         self.event(user, "reconnected" if user in self.users and self.users[user]["joined"] != int(time.time()) else "joined", message="participant connected")
     def auth(self, token):
         if not SECRET: return None
+        with self.lock:
+            if token in self.revoked_tokens: return None
         try: user, mac = token.split(".", 1)
         except ValueError: return None
         try: user, expiry, mac = token.split(".", 2); expiry = int(expiry)
         except (ValueError, TypeError): return None
         material = f"{user}.{expiry}".encode()
         expected = hmac.new(SECRET.encode(), material, hashlib.sha256).hexdigest()
-        return user if expiry >= int(time.time()) and hmac.compare_digest(mac, expected) and user and len(user) <= 128 else None
+        return user if expiry >= int(time.time()) and not self.revocations.contains(user) and hmac.compare_digest(mac, expected) and user and len(user) <= 128 else None
+    def revoke_user(self, actor, target):
+        with self.lock:
+            if target not in self.users: raise ValueError("unknown participant")
+            self.revocations.add(target); self.users[target]["connected"] = False; self.users[target]["removed"] = True
+            clients = [client for client in self.clients if getattr(client, "user", None) == target]
+        for client in clients:
+            try: client.close(1008, "participant revoked")
+            except Exception: pass
+        self.event(actor, "removed", message=f"participant {target} removed and tokens revoked")
     def active(self, user):
         with self.lock:
             return user in self.users and self.users[user].get("connected", False) and not self.users[user].get("removed", False)
@@ -85,21 +113,26 @@ class Session:
 SESSION = Session()
 
 def ws_accept(key): return base64.b64encode(hashlib.sha1((key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode()).digest()).decode()
-def ws_frame(text):
-    data = text.encode(); n = len(data)
-    head = bytes([0x81, n]) if n < 126 else bytes([0x81,126]) + struct.pack("!H",n)
+def ws_frame(text, opcode=0x1):
+    data = text.encode() if isinstance(text, str) else text; n = len(data)
+    if n >= 65536: raise ValueError("frame too large")
+    head = bytes([0x80 | opcode, n]) if n < 126 else bytes([0x80 | opcode,126]) + struct.pack("!H",n)
     return head + data
 
 def read_frame(rfile):
     head = rfile.read(2)
-    if len(head) != 2: return None
-    length = head[1] & 127; masked = bool(head[1] & 128)
+    if len(head) != 2: return (0, None)
+    first, second = head; opcode = first & 0x0f; length = second & 127; masked = bool(second & 128)
+    if first & 0x70 or not masked: raise ValueError("protocol error: RSV or client masking")
+    if opcode >= 8 and (not (first & 0x80) or length > 125): raise ValueError("protocol error: invalid control frame")
     if length == 126: length = struct.unpack("!H", rfile.read(2))[0]
     elif length == 127: length = struct.unpack("!Q", rfile.read(8))[0]
-    mask = rfile.read(4) if masked else b""; data = bytearray(rfile.read(length))
+    if length > 1024 * 1024: raise ValueError("message too large")
+    mask = rfile.read(4); data = bytearray(rfile.read(length))
+    if len(mask) != 4 or len(data) != length: return (0, None)
     if masked:
         for i in range(len(data)): data[i] ^= mask[i % 4]
-    return bytes(data).decode("utf-8", "replace")
+    return opcode, bytes(data)
 
 class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -146,9 +179,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.send_json(200, {"status":"disconnected"})
         if action == "remove":
             target = str(body.get("participant_id", ""))
-            if target not in SESSION.users: return self.send_json(404, {"error":"unknown participant"})
-            SESSION.users[target]["connected"] = False; SESSION.users[target]["removed"] = True
-            SESSION.event(user, "removed", message=f"participant {target} removed")
+            try: SESSION.revoke_user(user, target)
+            except ValueError as exc: return self.send_json(404, {"error":str(exc)})
             return self.send_json(200, {"status":"removed", "participant_id":target})
         if action == "propose":
             command, target = str(body.get("command","")), str(body.get("target",""))
@@ -175,11 +207,19 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             while not SESSION.expired():
-                raw = read_frame(self.rfile)
-                if not raw: break
-                try: msg=json.loads(raw)
-                except json.JSONDecodeError: continue
-                if msg.get("action") == "ping": client.send_event(json.dumps({"type":"pong"}))
+                opcode, raw = read_frame(self.rfile)
+                if opcode == 0: break
+                if opcode == 0x8:
+                    code = raw[:2] if len(raw) >= 2 else struct.pack("!H", 1000)
+                    client.send_control(0x8, code); break
+                if opcode == 0x9: client.send_control(0xA, raw); continue
+                if opcode != 0x1: client.close(1003, "text frames required"); break
+                try: msg=json.loads(raw.decode("utf-8"))
+                except (UnicodeDecodeError, json.JSONDecodeError): client.close(1007, "invalid text"); break
+                if msg.get("action") == "ping": client.send_control(0xA, b"ping")
+        except (ValueError, BrokenPipeError, ConnectionResetError, OSError):
+            try: client.close(1002, "protocol error")
+            except Exception: pass
         finally: SESSION.clients.discard(client)
     def log_message(self, *_): pass
 
@@ -192,6 +232,12 @@ class SSEClient:
 class WSClient:
     def __init__(self,conn,rfile,wfile,user): self.conn=conn; self.rfile=rfile; self.wfile=wfile; self.user=user
     def send_event(self,payload): self.wfile.write(ws_frame(payload)); self.wfile.flush()
+    def send_control(self, opcode, payload): self.wfile.write(ws_frame(payload, opcode)); self.wfile.flush()
+    def close(self, code=1000, reason=""):
+        data = struct.pack("!H", code) + reason.encode()[:123]
+        self.send_control(0x8, data)
+        try: self.conn.shutdown(socket.SHUT_RDWR)
+        except OSError: pass
 
 def main():
     if not SECRET: raise SystemExit("DATYA_COLLAB_SECRET is required")

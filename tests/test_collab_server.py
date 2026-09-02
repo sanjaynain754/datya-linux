@@ -44,11 +44,14 @@ class CollabServerTests(unittest.TestCase):
         elif length == 127: length = struct.unpack("!Q", conn.recv(8))[0]
         data = b""
         while len(data) < length: data += conn.recv(length - len(data))
-        return data[:length].decode()
+        return data[:length]
     @staticmethod
     def masked_frame(text):
         data = text.encode(); mask = b"abcd"; head = bytes([0x81, 0x80 | len(data)])
         return head + mask + bytes(value ^ mask[index % 4] for index, value in enumerate(data))
+    @staticmethod
+    def masked_control(opcode, payload=b""):
+        mask = b"wxyz"; return bytes([0x80 | opcode, 0x80 | len(payload)]) + mask + bytes(value ^ mask[index % 4] for index, value in enumerate(payload))
     def test_invalid_token_rejected(self): self.assertEqual(self.request("GET", "/health", "bad.token")[0], 401)
     def test_four_users_and_fifth_rejected(self):
         for user in ["a","b","c","d"]: self.assertEqual(self.join(user)[0], 200)
@@ -64,10 +67,14 @@ class CollabServerTests(unittest.TestCase):
     def test_sse_requires_join(self): self.assertEqual(self.request("GET", "/sessions/current/events", self.token("not-joined"))[0], 403)
     def test_websocket_handshake_and_masked_frames(self):
         conn, response = self.ws_connect("ws-user"); self.assertIn(b"101 Switching Protocols", response); first = json.loads(self.read_ws_frame(conn)); self.assertEqual(first["event"], "joined")
-        conn.sendall(self.masked_frame(json.dumps({"action":"ping"}))); self.assertEqual(json.loads(self.read_ws_frame(conn))["type"], "pong"); conn.close()
+        conn.sendall(self.masked_control(0x9, b"health")); self.assertEqual(self.read_ws_frame(conn), b"health"); conn.close()
     def test_websocket_malformed_json_does_not_break_connection(self):
         conn, response = self.ws_connect("bad-frame"); self.assertIn(b"101 Switching Protocols", response); self.read_ws_frame(conn)
-        conn.sendall(self.masked_frame("not-json")); conn.sendall(self.masked_frame(json.dumps({"action":"ping"}))); self.assertEqual(json.loads(self.read_ws_frame(conn))["type"], "pong"); conn.close()
+        conn.sendall(self.masked_frame("not-json")); self.assertEqual(struct.unpack("!H", self.read_ws_frame(conn)[:2])[0], 1007); conn.close()
+    def test_remove_revokes_participant_tokens(self):
+        self.assertEqual(self.join("owner")[0], 200); self.assertEqual(self.join("target")[0], 200)
+        status, _ = self.request("POST", "/sessions/current/commands", self.token("owner"), {"action":"remove", "participant_id":"target"}); self.assertEqual(status, 200)
+        self.assertEqual(self.request("GET", "/health", self.token("target"))[0], 401)
     def test_persistent_event_log_is_hash_chained(self):
         self.assertEqual(self.join("logged")[0], 200); lines = self.log.read_text().splitlines(); self.assertGreaterEqual(len(lines), 1); previous = "0" * 64
         for sequence, line in enumerate(lines):

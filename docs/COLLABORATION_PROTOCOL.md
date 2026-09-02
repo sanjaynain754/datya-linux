@@ -68,3 +68,9 @@ Issue a participant token with `tools/issue-collab-token.sh`; the reference serv
 Set `DATYA_EVENT_LOG=/var/lib/datya/collaboration-events.log` to enable a local append-only SHA-256 hash chain. Each record uses the same six-field format as the C++ `EventLog`: sequence, timestamp, type, JSON payload, previous hash, and current hash. The server validates the complete chain at startup, appends with `fsync`, and replays validated events to new SSE clients after a restart. A corrupt log prevents startup rather than silently continuing from an untrusted state.
 
 The automated suite covers TLS WebSocket upgrade, masked client frames, server event frames, malformed JSON resilience, scope enforcement, four-user limits, token rejection, and hash-chain records.
+
+## Revocation and WebSocket controls
+
+Set `DATYA_REVOCATION_FILE=/var/lib/datya/revoked-participants` to persist participant revocations with mode `0600`. Removing a participant immediately marks the identity revoked, closes matching WebSocket connections with close code `1008` (policy violation), and rejects all future tokens for that identity, including after restart. Rotate the signing secret to invalidate every token globally.
+
+The transport requires masked client frames, rejects RSV bits, rejects oversized/control-fragmented frames, responds to WebSocket `PING` with `PONG`, echoes a valid close frame, and closes malformed text with `1007` or protocol violations with `1002`. It does not execute arbitrary commands.
