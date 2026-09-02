@@ -1,0 +1,34 @@
+version = 1
+
+# Curated package intent catalog. This file is a discovery/planning layer;
+# installation still requires a verified package manifest entry.
+
+[pack.observe]
+summary = "Read-only local posture, process, network, and log visibility"
+profile = "security-observe"
+tools = ["procps", "psmisc", "iproute2", "iputils-ping", "dnsutils", "lsof", "strace", "auditd", "apparmor-utils"]
+
+[pack.forensics]
+summary = "Evidence collection and offline filesystem timeline workflows"
+profile = "forensics"
+tools = ["sleuthkit", "testdisk", "hashdeep", "binwalk", "strings", "xxd", "ripgrep", "jq"]
+
+[pack.web-assessment]
+summary = "Authorized web application testing in an isolated lab"
+profile = "security-lab"
+tools = ["nmap", "curl", "wget", "ffuf", "nikto", "whatweb", "python3-requests"]
+
+[pack.network-lab]
+summary = "Authorized network protocol and traffic analysis"
+profile = "security-lab"
+tools = ["nmap", "tcpdump", "tshark", "wireshark", "netcat-openbsd", "socat", "mitmproxy"]
+
+[pack.cloud-code]
+summary = "Local source, dependency, SBOM, IaC, and container review"
+profile = "cloud-code"
+tools = ["git", "python3", "cargo", "rustc", "cmake", "shellcheck", "gitleaks", "trivy", "syft", "semgrep"]
+
+[pack.wireless]
+summary = "Wireless, Bluetooth, and firmware observation with explicit scope"
+profile = "wireless-hardware"
+tools = ["iw", "rfkill", "bluez", "usbutils", "aircrack-ng", "kismet"]
