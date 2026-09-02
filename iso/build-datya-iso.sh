@@ -41,7 +41,10 @@ procps psmisc iproute2 iputils-ping dnsutils curl
 python3
 rustc cargo
 build-essential cmake pkg-config libssl-dev kmod
-live-boot live-config
+ live-boot live-config
+xfce4 xfce4-goodies lightdm lightdm-gtk-greeter
+firefox-esr xterm dbus-x11
+calamares
 PACKAGES
 
 if [[ "$ARCHITECTURE" == "amd64" ]]; then
@@ -71,6 +74,36 @@ printf '%s\n' 'Datya Linux live environment'
 printf '%s\n' 'Privacy: local-only defaults; inspect scope before authorized testing.'
 EOF
 chmod 0755 config/includes.chroot/usr/local/bin/datya-first-boot
+
+# Default desktop integration: a visible launcher opens the local dashboard.
+mkdir -p config/includes.chroot/usr/share/applications config/includes.chroot/usr/share/datya
+cp "$PROJECT_DIR/../dashboard/index.html" config/includes.chroot/usr/share/datya/dashboard.html
+cat > config/includes.chroot/usr/local/bin/datya-dashboard <<'EOF'
+#!/bin/sh
+set -eu
+exec firefox-esr --new-window file:///usr/share/datya/dashboard.html
+EOF
+chmod 0755 config/includes.chroot/usr/local/bin/datya-dashboard
+cat > config/includes.chroot/usr/share/applications/datya-dashboard.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Datya Security Dashboard
+Comment=Local collaboration and security event dashboard
+Exec=/usr/local/bin/datya-dashboard
+Icon=security-high
+Terminal=false
+Categories=Security;System;
+EOF
+cat > config/includes.chroot/usr/share/applications/calamares.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Install Datya Linux
+Comment=Install Datya Linux to this computer
+Exec=pkexec calamares
+Icon=system-software-install
+Terminal=false
+Categories=System;Settings;
+EOF
 
 # Disable common unnecessary telemetry/reporting services when present.
 mkdir -p config/includes.chroot/etc/systemd/system

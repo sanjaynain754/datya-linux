@@ -46,6 +46,8 @@ jobs:
           bash -n iso/build-datya-iso.sh
           bash -n iso/auto/config
           bash -n iso/config/hooks/normal/0900-install-datya-security.hook.chroot
+          bash -n iso/config/hooks/normal/0950-configure-desktop.hook.chroot
+          bash -n iso/build-datya-iso.sh
           bash -n security/signing/generate-mok.sh
           bash -n security/signing/sign-module.sh
           bash -n security/signing/enroll-mok.sh
@@ -54,6 +56,9 @@ jobs:
           python3 -m py_compile tools/datya-debian-sync.py
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 tools/verify-package-manifest.py packages/manifest.json
+          grep -q -- '--debian-installer live' iso/auto/config
+          grep -q 'xfce4' iso/build-datya-iso.sh
+          test -f iso/config/includes.chroot/etc/calamares/settings.conf
       - name: Reject private signing material
         run: |
           ! find . -type f \( -name '*.priv' -o -name '*.key' \) -not -path './.git/*' -print -quit | grep -q .

@@ -1,28 +1,26 @@
 # Datya Linux Debian ISO Builder
 
-This directory contains the first Debian `live-build` configuration for a reproducible Datya Linux live image. It creates an intentionally small cybersecurity-oriented base with AppArmor, encrypted-storage tooling, NetworkManager, local build tooling, and visible Datya policy markers. It does not yet install the Guardian kernel module or all 60+ security tools; those must be added as signed, versioned packages after their adapters and policies are reviewed.
-
-The `0900-install-datya-security.hook.chroot` hook now builds and installs the C++ control daemon and stages the Guardian kernel module for the exact image kernel. See [packaged security components](PACKAGED_SECURITY.md) for the signing and enablement rules.
+This directory builds the first installable Datya Linux desktop image from Debian live-build. The default image targets `amd64` and `arm64`, boots into XFCE with LightDM, includes the local Datya dashboard launcher, and exposes an interactive Calamares installer. The installer is deliberately not unattended: users must review partitioning, locale, keyboard, user creation, and bootloader settings before committing an installation.
 
 ## Build
 
-Run on a Debian/Ubuntu build host with root access:
+Run on a Debian/Ubuntu build host with live-build, root access, and sufficient disk space:
 
 ```bash
 sudo apt-get update
 sudo apt-get install --yes live-build debootstrap squashfs-tools xorriso \
-  grub-pc-bin grub-efi-amd64-bin grub-efi-arm64-bin mtools dosfstools
+  grub-pc-bin grub-efi-amd64-bin grub-efi-arm64-bin mtools dosfstools calamares
 sudo ./build-datya-iso.sh amd64 trixie
 ```
 
-The script supports `amd64` and `arm64` as build profiles. ARM64 boot is hardware-specific; Raspberry Pi 5 requires a board-tested boot artifact and firmware flow rather than assuming that a generic hybrid ISO will boot directly.
+The ISO is written under `iso/binary/live-image-*.iso` by live-build. Review `SHA256SUMS`, boot it in a virtual machine, and verify the installer and desktop before distributing it.
 
-## Reproducibility and release checks
+## Release status
 
-Set `SOURCE_DATE_EPOCH` to a fixed UTC timestamp. For a release build, pin the Debian mirror to a dated snapshot, verify signed Release metadata, record the exact live-build and host package versions, generate an SBOM, and compare the image hash with an independent rebuild. Do not publish signing private keys in this repository.
+The build configuration is an installable desktop prototype, not yet a signed stable release. Release maintainers must pin and verify Debian `InRelease` metadata, replace catalogued package placeholders with real checksums, provide signed Datya kernel-module artifacts, test Secure Boot, and validate hardware on representative laptops, PCs, and Raspberry Pi 5 boards. ARM64 ISO boot is hardware-specific and must not be advertised as universal.
 
-Secure Boot signing is a separate release step. Sign the boot chain, kernel, initramfs, and any out-of-tree modules with an owner-controlled release key, then publish the corresponding certificate and verification instructions. A build completing successfully is not evidence that the image is secure; it must pass boot, package, policy, recovery, and hardware tests.
+## Desktop integration
 
-## Planned additions
+`config/hooks/normal/0950-configure-desktop.hook.chroot` configures XFCE and LightDM, disables guest login, sets the graphical default target, and writes `/etc/datya/desktop`. The dashboard is copied to `/usr/share/datya/dashboard.html`; its launcher opens the local file and does not send telemetry. `calamares.desktop` starts the interactive installer through `pkexec`.
 
-The next ISO iteration should add a signed Datya package repository, the Guardian daemon, the C++ control daemon, a desktop profile, scope-controlled tool adapters, and a tested recovery environment. Tool packages should be optional profiles so users can customize the image without receiving unnecessary capabilities.
+The ISO build currently compiles the C++ reference daemon and experimental Guardian module in a chroot. A production stable release must fail closed unless the module is signed with the project's trusted key and independently verified.

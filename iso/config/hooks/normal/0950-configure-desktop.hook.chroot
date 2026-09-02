@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+
+# Desktop and graphical login defaults for the installable Datya image.
+mkdir -p /etc/systemd/system/graphical.target.wants /etc/lightdm
+ln -sf /lib/systemd/system/lightdm.service /etc/systemd/system/display-manager.service
+ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
+cat > /etc/lightdm/lightdm.conf.d/50-datya.conf <<'EOF'
+[Seat:*]
+greeter-session=lightdm-gtk-greeter
+user-session=xfce
+allow-guest=false
+autologin-guest=false
+EOF
+# The installer remains user-launched from the desktop; no unattended partitioning.
+cat > /etc/datya/desktop <<'EOF'
+desktop=xfce
+login_manager=lightdm
+installer=calamares
+installer_mode=interactive
+unattended_install=false
+dashboard=/usr/share/datya/dashboard.html
+EOF
+chmod 0644 /etc/datya/desktop

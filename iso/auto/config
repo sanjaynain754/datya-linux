@@ -14,10 +14,11 @@ lb config \
   --mirror-chroot "$DEBIAN_MIRROR" \
   --mirror-binary "$DEBIAN_MIRROR" \
   --binary-images iso-hybrid \
-  --bootappend-live "boot=live components quiet splash" \
-  --debian-installer none \
+  --debian-installer live \
   --apt-recommends false \
   --apt-indices false \
+  --debian-installer-gui true \
+  --bootappend-live "boot=live components quiet splash username=datya locales=en_US.UTF-8 keyboard-layouts=us" \
   --memtest none \
   --iso-application "Datya Linux" \
   --iso-volume "DATYA_LINUX" \
