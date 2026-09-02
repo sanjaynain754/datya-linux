@@ -26,6 +26,7 @@ GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, 
 - [Four-user collaboration](docs/COLLABORATION.md)
 - [Collaboration transport protocol](docs/COLLABORATION_PROTOCOL.md)
 - [Feature parity and modular profiles](docs/FEATURE_PARITY.md)
+- [Security audit](docs/SECURITY_AUDIT.md)
 - [Threat model](docs/THREAT_MODEL.md)
 - [Developer environment](docs/DEVELOPER_ENVIRONMENT.md)
 - [Cybersecurity Workbench](docs/CYBERSECURITY_WORKBENCH.md)
@@ -49,6 +50,8 @@ The `datya-control-daemon` is the keyboard-first general-purpose workbench orche
 The `datya-tool-adapters` crate provides the adapter policy layer. It executes only fixed allowlisted binaries without a shell, supports dry-run and execute modes, validates scoped targets, enforces a minimum interval between runs, applies a timeout, caps captured output, and writes evidence to a local temporary path. Read-only adapters currently cover sockets, routes, DNS, HTTP headers, process posture, kernel posture, firewall status, and AppArmor status; additional tools must be added deliberately with a reviewable policy.
 
 Optional capability profiles are catalogued in `profiles/catalog.toml` and can be reviewed without changes using `tools/datya-profile.sh --dry-run <profile>` or installed from the current Debian repositories. Datya does not mix Kali repositories into its Debian base or claim that every Linux feature is installed; each capability must carry provenance, license, architecture, privilege, network, test, and uninstall metadata.
+
+The read-only `tools/datya-security-audit.sh` checks filesystem permissions, ownership, SUID/SGID, writable paths, sensitive files, symlinks, ACLs, and available authentication-log indicators. It supports text and JSON reports and severity-based exit codes; it does not modify the system or prove historical access.
 
 The `cpp-control` directory contains a C++17 control-daemon reference implementation. It exposes the 77-tool catalog, keeps actions in dry-run planning mode, requires an authorized scope for network tools, and writes local append-only hash-chained events. Build it with CMake and OpenSSL: `cmake -S cpp-control -B build && cmake --build build`. Run `./build/datya-control /var/lib/datya/events.log`, then use `scope add <target>`, `run <tool> <target>`, and `verify`.
 
