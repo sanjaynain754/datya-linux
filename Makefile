@@ -10,14 +10,15 @@ ARCH ?= amd64
 SUITE ?= trixie
 BUILD_DIR ?= build
 
-.PHONY: help check test build build-all build-python build-shell build-rust build-cpp build-kernel manifest install-plan iso clean
+.PHONY: help check test build build-all device-lab build-python build-shell build-rust build-cpp build-kernel manifest install-plan iso clean
 
 help:
 	@printf '%s\n' 'Datya Linux unified build targets:'
 	@printf '%s\n' '  make check         syntax, policy, manifest, and catalog checks'
 	@printf '%s\n' '  make test          all Python regression tests'
 	@printf '%s\n' '  make build         check + Python + Rust + C/C++ builds'
-	@printf '%s\n' '  make build-all     build + target-kernel module + ISO prerequisites check'
+	@printf '%s\n' '  make build-all     build + target-kernel module'
+	@printf '%s\n' '  make device-lab    inventory hardware and build-lab readiness'
 	@printf '%s\n' '  make build-rust    cargo fmt/check/test/clippy'
 	@printf '%s\n' '  make build-cpp     CMake configure and build'
 	@printf '%s\n' '  make build-kernel  out-of-tree kernel module build'
@@ -70,6 +71,9 @@ build: check build-rust build-cpp
 
 build-all: build build-kernel
 	@printf '%s\n' 'Datya source components, including the kernel module, built successfully.'
+
+device-lab:
+	@$(PYTHON) tools/datya-device-lab.py --json --output $(BUILD_DIR)/device-lab.json
 
 install-plan:
 	@$(PYTHON) tools/datya-install-pack.py --all

@@ -38,6 +38,15 @@ sudo make iso ARCH=amd64 SUITE=trixie
 
 It requires Debian `live-build` and a root-capable build environment. ISO builds are not run by the default `make build` target because they are destructive to the ISO build directory, slow, privileged, and architecture-specific.
 
+## Device-lab readiness
+
+```bash
+make device-lab
+python3 tools/datya-device-lab.py --strict --json
+```
+
+The device-lab command only inventories the host; it does not load modules, attach USB devices, start VMs, change firewall rules, or install packages. It records architecture, kernel version, matching kernel-header availability, compilers, ISO tooling, virtualization commands, KVM/TUN/USB device nodes, network interfaces, and block devices in `build/device-lab.json`. Strict mode fails unless user-space build tools, ShellCheck, matching kernel headers, `live-build`, and a QEMU/KVM lab are all ready. A normal report is still useful on a constrained sandbox because it distinguishes `READY` from `BLOCKED` without claiming a hardware test occurred.
+
 ## Package and tool-pack checks
 
 ```bash
