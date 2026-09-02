@@ -46,6 +46,8 @@ data: {"sequence":12,"actor_id":"u-1","event":"command.started","command_id":"cm
 
 SSE is for visibility, not command execution. The server must enforce per-participant filtering, heartbeat timeouts, replay-from-sequence, and an explicit `session.expired` event.
 
+The browser dashboard uses a short-lived `token` query parameter because native `EventSource` cannot set an `Authorization` header. Production reverse proxies must disable URL query logging, enforce HTTPS, keep token TTLs short, and prefer a same-origin session cookie or a WebSocket-authenticated bootstrap when available.
+
 The transport does not grant system privileges. Actual work continues through Datya's fixed adapter allowlist, explicit scope, dry-run default, timeout, rate-limit, output cap, and append-only event log.
 
 ## Reference server

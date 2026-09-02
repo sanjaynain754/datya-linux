@@ -7,7 +7,7 @@ Use TLS in every non-local deployment and provide DATYA_COLLAB_SECRET.
 from __future__ import annotations
 import base64, hashlib, hmac, json, os, secrets, ssl, struct, threading, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 MAX_USERS = 4
 SESSION_TTL = int(os.getenv("DATYA_SESSION_TTL", "28800"))
@@ -35,6 +35,7 @@ class Session:
         with self.lock:
             if self.expired(): raise ValueError("session expired")
             user = client.user
+            if user in self.users and self.users[user].get("removed"): raise ValueError("participant removed")
             if user in self.users: self.users[user]["connected"] = True
             elif len(self.users) >= MAX_USERS: raise ValueError("session full")
             else: self.users[user] = {"connected": True, "joined": int(time.time())}
@@ -51,7 +52,7 @@ class Session:
         return user if expiry >= int(time.time()) and hmac.compare_digest(mac, expected) and user and len(user) <= 128 else None
     def active(self, user):
         with self.lock:
-            return user in self.users and self.users[user].get("connected", False)
+            return user in self.users and self.users[user].get("connected", False) and not self.users[user].get("removed", False)
 
 SESSION = Session()
 
@@ -76,10 +77,14 @@ class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     def token_user(self):
         value = self.headers.get("Authorization", "")
-        return SESSION.auth(value[7:]) if value.startswith("Bearer ") else None
+        if value.startswith("Bearer "): return SESSION.auth(value[7:])
+        query = parse_qs(urlparse(self.path).query)
+        return SESSION.auth(query.get("token", [""])[0])
     def send_json(self, code, data):
         raw = json.dumps(data).encode(); self.send_response(code); self.send_header("Content-Type","application/json"); self.send_header("Content-Length",str(len(raw))); self.end_headers(); self.wfile.write(raw)
     def do_GET(self):
+        if self.headers.get("Upgrade", "").lower() == "websocket":
+            return self.do_UPGRADE()
         user = self.token_user()
         if not user: return self.send_json(401, {"error":"authentication required"})
         path = urlparse(self.path).path
@@ -107,6 +112,16 @@ class Handler(BaseHTTPRequestHandler):
             except ValueError as exc: return self.send_json(409,{"error":str(exc)})
             return self.send_json(200,{"ok":True,"participant_id":user,"max_participants":MAX_USERS})
         if not SESSION.active(user): return self.send_json(403,{"error":"join the session first"})
+        if action == "disconnect":
+            if user in SESSION.users: SESSION.users[user]["connected"] = False
+            SESSION.event(user, "left", message="participant disconnected")
+            return self.send_json(200, {"status":"disconnected"})
+        if action == "remove":
+            target = str(body.get("participant_id", ""))
+            if target not in SESSION.users: return self.send_json(404, {"error":"unknown participant"})
+            SESSION.users[target]["connected"] = False; SESSION.users[target]["removed"] = True
+            SESSION.event(user, "removed", message=f"participant {target} removed")
+            return self.send_json(200, {"status":"removed", "participant_id":target})
         if action == "propose":
             command, target = str(body.get("command","")), str(body.get("target",""))
             if not cid or len(command)>512 or "\n" in command or target not in SCOPE: return self.send_json(403,{"error":"invalid command or target outside explicit scope"})

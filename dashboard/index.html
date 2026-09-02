@@ -20,7 +20,7 @@
   </style>
 </head>
 <body>
-  <header><h1>Datya / Shared Session <span class="status">● TLS 1.3 · authenticated · live</span></h1><div>expires in 07:42:18</div></header>
+  <header><h1>Datya / Shared Session <span id="connection" class="status">● disconnected</span></h1><div id="expiry">session expiry is server-controlled</div></header>
   <main>
     <div class="grid">
       <aside>
@@ -42,9 +42,35 @@
           <div class="event"><span class="seq">#040</span> 18:23:59 · Ravi · command.approved · cmd-17</div>
           <div class="event"><span class="seq">#039</span> 18:23:41 · Asha · command.proposed · cmd-17</div>
           <div class="event"><span class="seq">#038</span> 18:22:17 · Meera · joined</div>
-        </div></section>
+        </div><div style="margin-top:12px"><label for="token">Participant token</label><br><input id="token" type="password" autocomplete="off" style="width:100%;padding:9px;background:#161616;color:white;border:1px solid #555;border-radius:4px"><br><br><button id="connect">Connect live events</button></div></section>
       </section>
     </div>
   </main>
+  <script>
+    (() => {
+      const connection = document.querySelector('#connection');
+      const timeline = document.querySelector('.timeline');
+      const token = document.querySelector('#token');
+      let lastSequence = null;
+      function addEvent(event) {
+        const item = JSON.parse(event.data);
+        if (lastSequence !== null && item.sequence !== lastSequence + 1) {
+          const gap = document.createElement('div'); gap.className = 'event warning'; gap.textContent = `EVENT GAP: expected ${lastSequence + 1}, received ${item.sequence}`; timeline.prepend(gap);
+        }
+        lastSequence = item.sequence;
+        const row = document.createElement('div'); row.className = 'event';
+        row.textContent = `#${String(item.sequence).padStart(3,'0')} · ${new Date(item.timestamp * 1000).toLocaleTimeString()} · ${item.actor_id} · ${item.event}${item.command_id ? ` · ${item.command_id}` : ''}`;
+        timeline.prepend(row);
+      }
+      document.querySelector('#connect').addEventListener('click', () => {
+        if (!token.value) { connection.textContent = '● token required'; return; }
+        const scheme = location.protocol === 'https:' ? 'https:' : 'http:';
+        const source = new EventSource(`${scheme}//${location.host}/sessions/current/events?token=${encodeURIComponent(token.value)}`);
+        source.onopen = () => { connection.textContent = '● TLS/authenticated · live'; };
+        source.addEventListener('session.event', addEvent);
+        source.onerror = () => { connection.textContent = '● reconnecting / unavailable'; };
+      });
+    })();
+  </script>
 </body>
 </html>

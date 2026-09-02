@@ -51,6 +51,7 @@ jobs:
           bash -n security/signing/enroll-mok.sh
           bash -n tools/issue-collab-token.sh
           python3 -m py_compile tools/datya-collab-server.py
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
       - name: Reject private signing material
         run: |
           ! find . -type f \( -name '*.priv' -o -name '*.key' \) -not -path './.git/*' -print -quit | grep -q .
