@@ -10,6 +10,10 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 MAX_USERS = 4
+MAX_BODY_BYTES = 64 * 1024
+MAX_COMMAND_ID = 128
+MAX_RESULT_BYTES = 4096
+MAX_TOKEN_BYTES = 512
 SESSION_TTL = int(os.getenv("DATYA_SESSION_TTL", "28800"))
 SECRET = os.environ.get("DATYA_COLLAB_SECRET", "")
 SCOPE = {x for x in os.environ.get("DATYA_SCOPE", "127.0.0.1").split(",") if x}
@@ -172,9 +176,16 @@ class Handler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     def token_user(self):
         value = self.headers.get("Authorization", "")
-        if value.startswith("Bearer "): return SESSION.auth(value[7:])
+        if value.startswith("Bearer "):
+            token = value[7:]
+            return SESSION.auth(token) if len(token) <= MAX_TOKEN_BYTES else None
+        # Query tokens are retained only for the WebSocket handshake because
+        # browsers cannot set Authorization during a native WebSocket upgrade.
+        if self.headers.get("Upgrade", "").lower() != "websocket":
+            return None
         query = parse_qs(urlparse(self.path).query)
-        return SESSION.auth(query.get("token", [""])[0])
+        token = query.get("token", [""])[0]
+        return SESSION.auth(token) if len(token) <= MAX_TOKEN_BYTES else None
     def send_json(self, code, data):
         raw = json.dumps(data).encode(); self.send_response(code); self.send_header("Content-Type","application/json"); self.send_header("Content-Length",str(len(raw))); self.end_headers(); self.wfile.write(raw)
     def do_GET(self):
@@ -199,9 +210,21 @@ class Handler(BaseHTTPRequestHandler):
         if not user: return self.send_json(401, {"error":"authentication required"})
         if urlparse(self.path).path != "/sessions/current/commands": return self.send_json(404,{"error":"not found"})
         if SESSION.expired(): return self.send_json(410,{"error":"session expired"})
-        try: body = json.loads(self.rfile.read(int(self.headers.get("Content-Length","0"))))
-        except (ValueError, json.JSONDecodeError): return self.send_json(400,{"error":"invalid json"})
+        try:
+            content_length = int(self.headers.get("Content-Length", "-1"))
+        except ValueError:
+            return self.send_json(400, {"error": "invalid content length"})
+        if content_length < 0 or content_length > MAX_BODY_BYTES:
+            return self.send_json(413, {"error": "request body too large"})
+        try:
+            body = json.loads(self.rfile.read(content_length))
+        except (ValueError, json.JSONDecodeError):
+            return self.send_json(400, {"error": "invalid json"})
+        if not isinstance(body, dict):
+            return self.send_json(400, {"error": "json object required"})
         action, cid = body.get("action"), body.get("command_id")
+        if cid is not None and (not isinstance(cid, str) or len(cid) > MAX_COMMAND_ID or "\n" in cid or "\r" in cid):
+            return self.send_json(400, {"error": "invalid command_id"})
         if action == "join":
             try: SESSION.add(HTTPClient(user))
             except ValueError as exc: return self.send_json(409,{"error":str(exc)})
@@ -217,16 +240,30 @@ class Handler(BaseHTTPRequestHandler):
             except ValueError as exc: return self.send_json(404, {"error":str(exc)})
             return self.send_json(200, {"status":"removed", "participant_id":target})
         if action == "propose":
-            command, target = str(body.get("command","")), str(body.get("target",""))
-            if not cid or len(command)>512 or "\n" in command or target not in SCOPE: return self.send_json(403,{"error":"invalid command or target outside explicit scope"})
-            SESSION.commands[cid] = {"proposer":user,"command":command,"target":target,"approvals":set()}; SESSION.event(user,"command.proposed",cid,f"dry-run proposal: {command} {target}"); return self.send_json(202,{"status":"proposed"})
-        if cid not in SESSION.commands: return self.send_json(404,{"error":"unknown command"})
-        request = SESSION.commands[cid]
-        if action == "approve": request["approvals"].add(user); SESSION.event(user,"command.approved",cid,"approval recorded"); return self.send_json(200,{"status":"approved"})
+            command, target = body.get("command", ""), body.get("target", "")
+            if not isinstance(command, str) or not isinstance(target, str) or not cid or len(command) > 512 or "\n" in command or "\r" in command or target not in SCOPE:
+                return self.send_json(403, {"error": "invalid command or target outside explicit scope"})
+            with SESSION.lock:
+                if cid in SESSION.commands:
+                    return self.send_json(409, {"error": "command_id already exists"})
+                SESSION.commands[cid] = {"proposer": user, "command": command, "target": target, "approvals": set()}
+            SESSION.event(user, "command.proposed", cid, f"dry-run proposal: {command} {target}")
+            return self.send_json(202, {"status": "proposed"})
+        with SESSION.lock:
+            request = SESSION.commands.get(cid)
+        if request is None: return self.send_json(404,{"error":"unknown command"})
+        if action == "approve":
+            with SESSION.lock:
+                request["approvals"].add(user)
+            SESSION.event(user,"command.approved",cid,"approval recorded"); return self.send_json(200,{"status":"approved"})
         if action == "start":
             if user != request["proposer"] and user not in request["approvals"]: return self.send_json(403,{"error":"proposer or approver required"})
             SESSION.event(user,"command.started",cid,"dry-run plan emitted; no command executed"); return self.send_json(200,{"status":"planned","command":request["command"],"target":request["target"]})
-        if action == "finish": SESSION.event(user,"command.finished",cid,str(body.get("result",""))); return self.send_json(200,{"status":"finished"})
+        if action == "finish":
+            result = body.get("result", "")
+            if not isinstance(result, str) or len(result.encode("utf-8")) > MAX_RESULT_BYTES:
+                return self.send_json(413, {"error": "result too large"})
+            SESSION.event(user,"command.finished",cid,result); return self.send_json(200,{"status":"finished"})
         return self.send_json(400,{"error":"unsupported action"})
     def do_UPGRADE(self):
         user = self.token_user()
