@@ -53,7 +53,7 @@ add_finding() {
 }
 scan_find() {
   local expression="$1" code="$2" severity="$3" detail="$4"
-  while IFS= read -r -d '' item; do add_finding "$severity" "$code" "$item" "$detail"; done < <(find "$ROOT" -xdev -P $expression -print0 2>/dev/null)
+  while IFS= read -r -d '' item; do add_finding "$severity" "$code" "$item" "$detail"; done < <(find -P "$ROOT" -xdev $expression -print0 2>/dev/null)
 }
 
 # Sensitive paths: existence is not itself a finding; unsafe mode/ownership is.
@@ -80,20 +80,20 @@ scan_find "-xdev -type d -perm /2000" SGID_DIRECTORY 1 "SGID directory; verify g
 while IFS= read -r -d '' item; do
   mode="$(stat -c '%a' "$item" 2>/dev/null || echo 0)"; owner="$(stat -c '%U' "$item" 2>/dev/null || echo unknown)"
   [[ "$owner" == root ]] && (( 10#$mode % 100 >= 20 || 10#$mode % 10 >= 2 )) && add_finding 3 ROOT_WRITABLE_FILE "$item" "root-owned mode=$mode"
-done < <(find "$ROOT" -xdev -P -type f -perm /0022 -print0 2>/dev/null)
+done < <(find -P "$ROOT" -xdev -type f -perm /0022 -print0 2>/dev/null)
 
 # Broken and absolute symlinks can redirect privileged consumers.
 while IFS= read -r -d '' item; do
   [[ -e "$item" ]] || add_finding 1 BROKEN_SYMLINK "$item" "symlink target is missing"
   target="$(readlink "$item" 2>/dev/null || true)"
   [[ "$target" == /* && "$item" == "$ROOT/etc/"* ]] && add_finding 1 ABSOLUTE_ETC_SYMLINK "$item" "target=$target; review privileged configuration redirection"
-done < <(find "$ROOT" -xdev -P -type l -print0 2>/dev/null)
+done < <(find -P "$ROOT" -xdev -type l -print0 2>/dev/null)
 
 # Optional ACL and mount evidence.
 if command -v getfacl >/dev/null; then
   while IFS= read -r -d '' item; do
     if getfacl -cp "$item" 2>/dev/null | grep -qE '^user:[^:]+:.*w|^group:[^:]+:.*w'; then add_finding 2 ACL_WRITE_ACCESS "$item" "named ACL grants write access; review identity and scope"; fi
-  done < <(find "$ROOT/etc" "$ROOT/usr" "$ROOT/var" -xdev -P -type f -print0 2>/dev/null)
+  done < <(find -P "$ROOT/etc" "$ROOT/usr" "$ROOT/var" -xdev -type f -print0 2>/dev/null)
 fi
 if command -v findmnt >/dev/null; then
   while IFS= read -r line; do
