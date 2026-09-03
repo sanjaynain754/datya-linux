@@ -10,6 +10,7 @@ ARCHITECTURE="${1:-amd64}"
 SUITE="${2:-trixie}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ISO_DIR="$ROOT_DIR/iso"
+VERSION_FILE="$ROOT_DIR/VERSION"
 RELEASE_DIR="${DATYA_RELEASE_DIR:-$ROOT_DIR/releases/${SUITE}-${ARCHITECTURE}}"
 SKIP_TESTS="${DATYA_SKIP_TESTS:-0}"
 SIGNING_KEY="${DATYA_RELEASE_SIGNING_KEY:-}"
@@ -26,6 +27,12 @@ EOF
 }
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then usage; exit 0; fi
 [[ "$(id -u)" -eq 0 ]] || fail "run with sudo/root; live-build uses chroot"
+[[ -f "$VERSION_FILE" ]] || fail "VERSION file missing"
+DATYA_VERSION="$(tr -d '[:space:]' < "$VERSION_FILE")"
+[[ "$DATYA_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "invalid Datya version: $DATYA_VERSION"
+if [[ "${GITHUB_REF_NAME:-}" == v* && "${GITHUB_REF_NAME#v}" != "$DATYA_VERSION" ]]; then
+  fail "tag ${GITHUB_REF_NAME} does not match VERSION $DATYA_VERSION"
+fi
 case "$ARCHITECTURE" in amd64|arm64) ;; *) fail "unsupported architecture: $ARCHITECTURE" ;; esac
 case "$SUITE" in bookworm|trixie) ;; *) fail "unsupported Debian suite: $SUITE" ;; esac
 [[ "$SKIP_TESTS" == 0 || "$SKIP_TESTS" == 1 ]] || fail "DATYA_SKIP_TESTS must be 0 or 1"
@@ -84,11 +91,12 @@ ISO_PATH="${ISO_FILES[0]}"
 rm -rf "$RELEASE_DIR"
 mkdir -p "$RELEASE_DIR/source" "$RELEASE_DIR/metadata"
 echo "[3/6] Collecting ISO and source bundle"
-cp -f "$ISO_PATH" "$RELEASE_DIR/Datya-Linux-${SUITE}-${ARCHITECTURE}.iso"
+cp -f "$ISO_PATH" "$RELEASE_DIR/Datya-Linux-v${DATYA_VERSION}-${SUITE}-${ARCHITECTURE}.iso"
 [[ -f "$ISO_DIR/SHA256SUMS" ]] && cp -f "$ISO_DIR/SHA256SUMS" "$RELEASE_DIR/metadata/live-build-SHA256SUMS"
 git archive --format=tar --prefix="datya-linux-${SUITE}-${ARCHITECTURE}/" HEAD | tar -xf - -C "$RELEASE_DIR/source"
 cat > "$RELEASE_DIR/metadata/release-info" <<EOF
 project=Datya Linux
+version=$DATYA_VERSION
 suite=$SUITE
 architecture=$ARCHITECTURE
 source_date_epoch=$SOURCE_DATE_EPOCH

@@ -8,6 +8,10 @@ set -euo pipefail
 ARCHITECTURE="${1:-amd64}"
 SUITE="${2:-trixie}"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VERSION_FILE="$PROJECT_DIR/../VERSION"
+[[ -f "$VERSION_FILE" ]] || { echo "VERSION file is required" >&2; exit 1; }
+DATYA_VERSION="$(tr -d '[:space:]' < "$VERSION_FILE")"
+[[ "$DATYA_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "invalid Datya version: $DATYA_VERSION" >&2; exit 1; }
 export DEBIAN_FRONTEND=noninteractive
 export SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-1704067200}"
 
@@ -62,6 +66,7 @@ PACKAGES
 fi
 
 cat > config/includes.chroot/etc/datya/build-info <<EOF
+DATYA_VERSION=$DATYA_VERSION
 DATYA_SUITE=$SUITE
 DATYA_ARCHITECTURE=$ARCHITECTURE
 SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH
