@@ -5,7 +5,7 @@ set -eu
 : "${DEBIAN_MIRROR:=https://deb.debian.org/debian}"
 : "${ARCHITECTURE:=amd64}"
 
-lb config \
+lb config noauto \
   --mode debian \
   --distribution "$DEBIAN_SUITE" \
   --architectures "$ARCHITECTURE" \
@@ -13,6 +13,8 @@ lb config \
   --mirror-bootstrap "$DEBIAN_MIRROR" \
   --mirror-chroot "$DEBIAN_MIRROR" \
   --mirror-binary "$DEBIAN_MIRROR" \
+  --mirror-chroot-security "https://security.debian.org/debian-security" \
+  --mirror-binary-security "https://security.debian.org/debian-security" \
   --binary-images iso-hybrid \
   --debian-installer live \
   --apt-recommends false \
