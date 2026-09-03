@@ -55,6 +55,14 @@ class PackageManagerTests(unittest.TestCase):
     def test_power_user_is_explicitly_unrestricted(self):
         self.assertEqual(self.sandbox.build_command("power-user", ["true"]), ["true"])
 
+    def test_sandbox_policy_contains_limits_when_available(self):
+        if not self.sandbox.shutil.which("bwrap"):
+            self.skipTest("bubblewrap is not installed in this environment")
+        command = self.sandbox.build_command("safe", ["true"])
+        self.assertIn("--cap-drop", command)
+        self.assertIn("--rlimit-nproc", command)
+        self.assertIn("--rlimit-fsize", command)
+
 
 if __name__ == "__main__":
     unittest.main()

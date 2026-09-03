@@ -24,7 +24,28 @@ def build_command(profile: str, command: list[str]) -> list[str]:
     if not bwrap:
         raise RuntimeError(f"profile '{profile}' requires bubblewrap; refusing unsafe fallback")
     root = str(Path.cwd())
-    args = [bwrap, "--die-with-parent", "--new-session", "--unshare-pid", "--unshare-uts", "--unshare-ipc", "--ro-bind", "/usr", "/usr", "--ro-bind", "/bin", "/bin", "--ro-bind", "/lib", "/lib", "--ro-bind", "/lib64", "/lib64", "--proc", "/proc", "--dev", "/dev", "--tmpfs", "/tmp", "--bind", root, root, "--chdir", root]
+    args = [
+        bwrap,
+        "--die-with-parent",
+        "--new-session",
+        "--unshare-user",
+        "--unshare-pid",
+        "--unshare-uts",
+        "--unshare-ipc",
+        "--cap-drop", "ALL",
+        "--rlimit-nproc", "256",
+        "--rlimit-nofile", "1024",
+        "--rlimit-fsize", str(64 * 1024 * 1024),
+        "--ro-bind", "/usr", "/usr",
+        "--ro-bind", "/bin", "/bin",
+        "--ro-bind", "/lib", "/lib",
+        "--ro-bind", "/lib64", "/lib64",
+        "--proc", "/proc",
+        "--dev", "/dev",
+        "--tmpfs", "/tmp",
+        "--bind", root, root,
+        "--chdir", root,
+    ]
     if profile in {"safe", "project"}:
         args += ["--unshare-net"]
     args += ["--"] + command
