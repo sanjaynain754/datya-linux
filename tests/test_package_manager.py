@@ -58,3 +58,20 @@ class PackageManagerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+    def test_record_only_transaction_and_rollback(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            state_path = Path(directory) / "state.json"
+            plan = self.pkg.install_plan("nmap")
+            record = self.pkg.commit_record(plan, state_path, "nmap")
+            self.assertEqual(record["backend"], "record-only")
+            self.assertIn("nmap", self.pkg.load_state(state_path)["installed"])
+            self.pkg.rollback(state_path, record["id"])
+            self.assertNotIn("nmap", self.pkg.load_state(state_path)["installed"])
+
+    def test_wrong_acknowledgement_cannot_commit(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(SystemExit):
+                self.pkg.commit_record(self.pkg.remove_plan("nmap", False), Path(directory) / "state.json", "not-nmap")
