@@ -1,3 +1,4 @@
+use serde::Serialize;
 use std::collections::BTreeMap;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -10,7 +11,7 @@ pub struct Participant {
     pub display_name: String,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum EventKind {
     Joined,
     Reconnected,
@@ -25,7 +26,7 @@ pub enum EventKind {
     Notice,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct SessionEvent {
     pub sequence: u64,
     pub timestamp: u64,
@@ -357,6 +358,213 @@ fn unix_now() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_or(0, |d| d.as_secs())
+}
+pub mod websocket {
+    use super::{CollaborationSession, Participant, SessionError, SessionEvent, MAX_PARTICIPANTS};
+    use futures_util::{SinkExt, StreamExt};
+    use serde::{Deserialize, Serialize};
+    use std::collections::HashMap;
+    use std::sync::Arc;
+    use tokio::net::{TcpListener, TcpStream};
+    use tokio::sync::{mpsc, Mutex};
+    use tokio_tungstenite::{accept_async, tungstenite::Message};
+
+    const MAX_FRAME_BYTES: usize = 64 * 1024;
+    type Outbound = mpsc::UnboundedSender<Message>;
+    type SharedSession = Arc<Mutex<CollaborationSession>>;
+    type Clients = Arc<Mutex<HashMap<String, Outbound>>>;
+
+    #[derive(Clone, Debug, Deserialize)]
+    #[serde(tag = "type", rename_all = "snake_case")]
+    enum ClientMessage {
+        Join {
+            operator_id: String,
+            display_name: String,
+            invite_token: String,
+        },
+        Command {
+            command_id: String,
+            command: String,
+        },
+        Disconnect,
+        Ping,
+    }
+
+    #[derive(Clone, Debug, Serialize)]
+    #[serde(tag = "type", rename_all = "snake_case")]
+    enum ServerMessage {
+        Joined {
+            operator_id: String,
+            max_operators: usize,
+        },
+        Event {
+            event: SessionEvent,
+        },
+        Error {
+            code: String,
+            message: String,
+        },
+        Pong,
+    }
+
+    #[derive(Debug, thiserror::Error)]
+    pub enum WebSocketError {
+        #[error("listener error: {0}")]
+        Io(#[from] std::io::Error),
+    }
+
+    /// Accept connections forever. Each client must send a valid `join` message first.
+    pub async fn run(
+        listener: TcpListener,
+        session: CollaborationSession,
+    ) -> Result<(), WebSocketError> {
+        let shared = Arc::new(Mutex::new(session));
+        let clients: Clients = Arc::new(Mutex::new(HashMap::new()));
+        loop {
+            let (stream, _) = listener.accept().await?;
+            let session = Arc::clone(&shared);
+            let clients = Arc::clone(&clients);
+            tokio::spawn(async move {
+                if let Err(error) = handle_connection(stream, session, clients).await {
+                    eprintln!("collaboration websocket connection closed: {error}");
+                }
+            });
+        }
+    }
+
+    async fn handle_connection(
+        stream: TcpStream,
+        session: SharedSession,
+        clients: Clients,
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        let websocket = accept_async(stream).await?;
+        let (mut sink, mut source) = websocket.split();
+        let (sender, mut receiver) = mpsc::unbounded_channel::<Message>();
+        let first = match source.next().await {
+            Some(Ok(Message::Text(text))) if text.len() <= MAX_FRAME_BYTES => text,
+            _ => {
+                sink.send(error_message(
+                    "invalid_join",
+                    "first frame must be a text join message",
+                ))
+                .await?;
+                return Ok(());
+            }
+        };
+        let (operator_id, display_name, invite_token) =
+            match serde_json::from_str::<ClientMessage>(&first)? {
+                ClientMessage::Join {
+                    operator_id,
+                    display_name,
+                    invite_token,
+                } => (operator_id, display_name, invite_token),
+                _ => {
+                    sink.send(error_message(
+                        "invalid_join",
+                        "first message must be type=join",
+                    ))
+                    .await?;
+                    return Ok(());
+                }
+            };
+        {
+            let mut state = session.lock().await;
+            state
+                .join(
+                    Participant {
+                        id: operator_id.clone(),
+                        display_name,
+                    },
+                    &invite_token,
+                )
+                .map_err(session_error)?;
+        }
+        clients
+            .lock()
+            .await
+            .insert(operator_id.clone(), sender.clone());
+        sender.send(json_message(&ServerMessage::Joined {
+            operator_id: operator_id.clone(),
+            max_operators: MAX_PARTICIPANTS,
+        })?)?;
+        broadcast_latest(&session, &clients).await?;
+        loop {
+            tokio::select! {
+                Some(message) = receiver.recv() => sink.send(message).await?,
+                incoming = source.next() => match incoming {
+                    Some(Ok(Message::Text(text))) if text.len() <= MAX_FRAME_BYTES => { if handle_message(&text, &operator_id, &session, &clients, &sender).await? { break; } }
+                    Some(Ok(Message::Ping(payload))) => sink.send(Message::Pong(payload)).await?,
+                    Some(Ok(Message::Close(_))) | None => break,
+                    Some(Ok(_)) => sender.send(error_message("invalid_frame", "only text frames are accepted"))?,
+                    Some(Err(error)) => return Err(error.into()),
+                }
+            }
+        }
+        clients.lock().await.remove(&operator_id);
+        let mut state = session.lock().await;
+        let _ = state.disconnect(&operator_id);
+        Ok(())
+    }
+
+    async fn handle_message(
+        text: &str,
+        operator_id: &str,
+        session: &SharedSession,
+        clients: &Clients,
+        sender: &Outbound,
+    ) -> Result<bool, Box<dyn std::error::Error + Send + Sync>> {
+        match serde_json::from_str::<ClientMessage>(text)? {
+            ClientMessage::Command {
+                command_id,
+                command,
+            } => {
+                let mut state = session.lock().await;
+                state
+                    .propose(operator_id, &command_id, &command)
+                    .map_err(session_error)?;
+                drop(state);
+                broadcast_latest(session, clients).await?;
+            }
+            ClientMessage::Ping => sender.send(json_message(&ServerMessage::Pong)?)?,
+            ClientMessage::Disconnect => return Ok(true),
+            ClientMessage::Join { .. } => sender.send(error_message(
+                "already_joined",
+                "operator is already joined",
+            ))?,
+        }
+        Ok(false)
+    }
+
+    async fn broadcast_latest(
+        session: &SharedSession,
+        clients: &Clients,
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        let event = { session.lock().await.events().last().cloned() };
+        if let Some(event) = event {
+            let payload = json_message(&ServerMessage::Event { event })?;
+            let recipients: Vec<Outbound> = clients.lock().await.values().cloned().collect();
+            for recipient in recipients {
+                let _ = recipient.send(payload.clone());
+            }
+        }
+        Ok(())
+    }
+
+    fn json_message<T: Serialize>(value: &T) -> Result<Message, serde_json::Error> {
+        Ok(Message::Text(serde_json::to_string(value)?.into()))
+    }
+
+    fn error_message(code: &str, message: &str) -> Message {
+        json_message(&ServerMessage::Error {
+            code: code.into(),
+            message: message.into(),
+        })
+        .expect("error response serialization cannot fail")
+    }
+
+    fn session_error(error: SessionError) -> Box<dyn std::error::Error + Send + Sync> {
+        format!("session rejected operation: {error:?}").into()
+    }
 }
 
 #[cfg(test)]
