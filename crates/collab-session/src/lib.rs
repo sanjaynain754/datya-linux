@@ -612,7 +612,7 @@ pub mod websocket {
     }
 
     fn json_message<T: Serialize>(value: &T) -> Result<Message, serde_json::Error> {
-        Ok(Message::Text(serde_json::to_string(value)?.into()))
+        Ok(Message::Text(serde_json::to_string(value)?))
     }
 
     fn error_message(code: &str, message: &str) -> Message {
