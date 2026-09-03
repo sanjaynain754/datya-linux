@@ -109,7 +109,10 @@ mod tests {
     fn requires_existing_allowlist_and_confirmation() {
         let request = request();
         assert!(validate(&request, &[PathBuf::from("/usr/bin/true")]).is_ok());
-        assert!(matches!(validate(&request, &[]), Err(RootExecutionError::UnapprovedExecutable(_))));
+        assert!(matches!(
+            validate(&request, &[]),
+            Err(RootExecutionError::UnapprovedExecutable(_))
+        ));
     }
 
     #[test]
@@ -117,7 +120,10 @@ mod tests {
         let mut request = request();
         request.executable = PathBuf::from("/bin/sh");
         request.confirmation = confirmation_token(&request);
-        assert_eq!(validate(&request, &[PathBuf::from("/bin/sh")]), Err(RootExecutionError::ShellInvocationRejected));
+        assert_eq!(
+            validate(&request, &[PathBuf::from("/bin/sh")]),
+            Err(RootExecutionError::ShellInvocationRejected)
+        );
     }
 
     #[test]
