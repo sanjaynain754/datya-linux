@@ -15,7 +15,57 @@ fn field<'a>(line: &'a str, key: &str) -> Option<&'a str> {
         .find_map(|item| item.strip_prefix(&format!("{key}=")))
 }
 
+fn parse_collector_json(line: &str) -> Option<Alert> {
+    let value: serde_json::Value = serde_json::from_str(line).ok()?;
+    if value.get("schema")?.as_str()? != "datya.guardian.event.v1" {
+        return None;
+    }
+    let event = value.get("event")?.as_str()?.to_string();
+    let fields = value.get("fields")?.as_object()?;
+    let pid = fields
+        .get("pid")
+        .and_then(|value| value.as_u64())
+        .map(|value| value as u32);
+    let (severity, confidence, message) = match event.as_str() {
+        "exec" => (
+            "info",
+            85,
+            format!(
+                "Process execution observed: {}",
+                fields
+                    .get("path")
+                    .and_then(|value| value.as_str())
+                    .unwrap_or("unknown")
+            ),
+        ),
+        "socket" => (
+            "low",
+            55,
+            format!(
+                "Socket state transition observed: {} -> {}",
+                fields
+                    .get("old")
+                    .map_or("?".into(), serde_json::Value::to_string),
+                fields
+                    .get("new")
+                    .map_or("?".into(), serde_json::Value::to_string)
+            ),
+        ),
+        _ => ("info", 35, "Unknown Guardian event observed".into()),
+    };
+    Some(Alert {
+        event,
+        pid,
+        severity,
+        confidence,
+        message,
+    })
+}
+
 fn parse_event(line: &str) -> Option<Alert> {
+    if line.trim_start().starts_with('{') {
+        return parse_collector_json(line);
+    }
     if !line.contains("datya_guardian") {
         return None;
     }
@@ -98,5 +148,16 @@ mod tests {
     #[test]
     fn ignores_unrelated_kernel_lines() {
         assert!(parse_event("kernel: unrelated message").is_none());
+    }
+
+    #[test]
+    fn parses_collector_json_event() {
+        let alert = parse_event(
+            r#"{"schema":"datya.guardian.event.v1","event":"exec","fields":{"pid":42,"path":"/usr/bin/nmap"}}"#,
+        )
+        .unwrap();
+        assert_eq!(alert.event, "exec");
+        assert_eq!(alert.pid, Some(42));
+        assert!(alert.message.contains("/usr/bin/nmap"));
     }
 }

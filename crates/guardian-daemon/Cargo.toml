@@ -6,3 +6,4 @@ description = "Local real-time alert daemon for Datya Guardian kernel evidence"
 license = "Apache-2.0"
 
 [dependencies]
+serde_json = "1"

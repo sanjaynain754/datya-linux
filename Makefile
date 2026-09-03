@@ -10,7 +10,7 @@ ARCH ?= amd64
 SUITE ?= trixie
 BUILD_DIR ?= build
 
-.PHONY: help check test build build-all device-lab build-python build-shell build-rust build-cpp build-kernel manifest install-plan iso clean
+.PHONY: help check test build build-all device-lab build-python build-shell build-rust build-cpp build-kernel manifest install-plan benchmark iso clean
 
 help:
 	@printf '%s\n' 'Datya Linux unified build targets:'
@@ -23,7 +23,8 @@ help:
 	@printf '%s\n' '  make build-cpp     CMake configure and build'
 	@printf '%s\n' '  make build-kernel  out-of-tree kernel module build'
 	@printf '%s\n' '  make iso            privileged Debian live-build ISO build'
-	@printf '%s\n' '  make install-plan  verified pack installer dry-run'
+	@printf '%s\n' '  make install-plan   verified pack installer dry-run'
+	@printf '%s\n' '  make benchmark      boot-adjacent resource and tool-launch baseline'
 
 check: build-python build-shell manifest
 	@$(PYTHON) tools/datya-tool-catalog.py --list >/dev/null
@@ -77,6 +78,10 @@ device-lab:
 
 install-plan:
 	@$(PYTHON) tools/datya-install-pack.py --all
+
+benchmark:
+	@$(PYTHON) tools/datya-benchmark.py --command true --repeats 5 --output $(BUILD_DIR)/benchmark.json
+	@printf '%s\n' 'Benchmark baseline written to $(BUILD_DIR)/benchmark.json.'
 
 iso:
 	@command -v lb >/dev/null 2>&1 || { echo 'live-build is required; install live-build before running make iso.' >&2; exit 127; }
