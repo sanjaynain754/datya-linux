@@ -3,11 +3,29 @@ name: Datya Linux CI
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      architecture:
+        description: 'ISO target architecture'
+        required: true
+        default: amd64
+        type: choice
+        options: [amd64, arm64]
+      suite:
+        description: 'Debian suite'
+        required: true
+        default: trixie
+        type: choice
+        options: [bookworm, trixie]
 
 permissions:
   contents: read
+
+env:
+  SOURCE_DATE_EPOCH: '1704067200'
 
 jobs:
   rust:
@@ -42,22 +60,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install static-check tools
-        run: sudo apt-get update && sudo apt-get install --yes shellcheck
+        run: sudo apt-get update && sudo apt-get install --yes shellcheck python3-yaml
       - name: Validate shell scripts
         run: |
-          shellcheck --severity=error iso/build-datya-iso.sh iso/auto/config iso/config/hooks/normal/0900-install-datya-security.hook.chroot iso/config/hooks/normal/0950-configure-desktop.hook.chroot security/signing/generate-mok.sh security/signing/sign-module.sh security/signing/enroll-mok.sh tools/issue-collab-token.sh tools/datya-profile.sh tools/datya-security-audit.sh
-          bash -n iso/build-datya-iso.sh
-          bash -n iso/auto/config
-          bash -n iso/config/hooks/normal/0900-install-datya-security.hook.chroot
-          bash -n iso/config/hooks/normal/0950-configure-desktop.hook.chroot
-          bash -n iso/build-datya-iso.sh
-          bash -n iso/build-release.sh
-          bash -n security/signing/generate-mok.sh
-          bash -n security/signing/sign-module.sh
-          bash -n security/signing/enroll-mok.sh
-          bash -n tools/issue-collab-token.sh
-          python3 -m py_compile tools/datya-collab-server.py
-          python3 -m py_compile tools/datya-debian-sync.py tools/datya-runner.py tools/datya-tool-catalog.py tools/datya-install-pack.py
+          shellcheck --severity=error iso/build-datya-iso.sh iso/build-release.sh iso/auto/config iso/config/hooks/normal/0900-install-datya-security.hook.chroot iso/config/hooks/normal/0950-configure-desktop.hook.chroot security/signing/generate-mok.sh security/signing/sign-module.sh security/signing/enroll-mok.sh tools/issue-collab-token.sh tools/datya-profile.sh tools/datya-security-audit.sh
+          bash -n iso/build-datya-iso.sh iso/build-release.sh iso/auto/config
+          bash -n iso/config/hooks/normal/0900-install-datya-security.hook.chroot iso/config/hooks/normal/0950-configure-desktop.hook.chroot
+          bash -n security/signing/generate-mok.sh security/signing/sign-module.sh security/signing/enroll-mok.sh tools/issue-collab-token.sh
+          python3 -m py_compile tools/datya-collab-server.py tools/datya-debian-sync.py tools/datya-runner.py tools/datya-tool-catalog.py tools/datya-install-pack.py
           python3 -c 'import tomllib; tomllib.load(open("profiles/tool-packs.toml", "rb"))'
           python3 -m unittest discover -s tests -p 'test_*.py' -v
           python3 tools/datya-tool-catalog.py --list
@@ -66,6 +76,8 @@ jobs:
           grep -q -- '--debian-installer live' iso/auto/config
           grep -q 'xfce4' iso/build-datya-iso.sh
           test -f iso/config/includes.chroot/etc/calamares/settings.conf
+      - name: Validate Calamares setup script
+        run: ./iso/setup-calamares.sh --check-only
       - name: Reject private signing material
         run: |
           ! find . -type f \( -name '*.priv' -o -name '*.key' \) -not -path './.git/*' -print -quit | grep -q .
@@ -75,3 +87,41 @@ jobs:
           grep -q 'kernel-module-policy=signed-only' iso/build-datya-iso.sh
           grep -q 'remote-reporting=disabled-by-default' iso/build-datya-iso.sh
           grep -q 'assessment=requires-explicit-scope' iso/build-datya-iso.sh
+
+  release:
+    name: Build ISO release bundle
+    needs: [rust, cpp, policy]
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    env:
+      ARCHITECTURE: ${{ github.event_name == 'workflow_dispatch' && inputs.architecture || 'amd64' }}
+      SUITE: ${{ github.event_name == 'workflow_dispatch' && inputs.suite || 'trixie' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install ISO build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            live-build debootstrap squashfs-tools xorriso \
+            grub-pc-bin grub-efi-amd64-bin grub-efi-arm64-bin \
+            mtools dosfstools calamares python3-yaml \
+            cargo cmake g++ libssl-dev shellcheck
+      - name: Validate Calamares host setup
+        run: sudo ./iso/setup-calamares.sh --no-install
+      - name: Build release bundle
+        run: |
+          sudo --preserve-env=SOURCE_DATE_EPOCH env \
+            DATYA_RELEASE_DIR="$GITHUB_WORKSPACE/release-bundle" \
+            ./iso/build-release.sh "$ARCHITECTURE" "$SUITE"
+      - name: Upload ISO release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Datya-Linux-${{ env.SUITE }}-${{ env.ARCHITECTURE }}
+          path: release-bundle/
+          if-no-files-found: error
+          retention-days: 14
