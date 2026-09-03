@@ -63,10 +63,11 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --yes shellcheck python3-yaml
       - name: Validate shell scripts
         run: |
-          shellcheck --severity=error iso/build-datya-iso.sh iso/build-release.sh iso/auto/config iso/config/hooks/normal/0900-install-datya-security.hook.chroot iso/config/hooks/normal/0950-configure-desktop.hook.chroot security/signing/generate-mok.sh security/signing/sign-module.sh security/signing/enroll-mok.sh tools/issue-collab-token.sh tools/datya-profile.sh tools/datya-security-audit.sh
+          shellcheck --severity=error iso/build-datya-iso.sh iso/build-release.sh iso/auto/config iso/config/hooks/normal/0900-install-datya-security.hook.chroot iso/config/hooks/normal/0950-configure-desktop.hook.chroot security/signing/generate-mok.sh security/signing/sign-module.sh security/signing/enroll-mok.sh security/signing/create-test-signing-bundle.sh tools/issue-collab-token.sh tools/datya-profile.sh tools/datya-security-audit.sh
           bash -n iso/build-datya-iso.sh iso/build-release.sh iso/auto/config
           bash -n iso/config/hooks/normal/0900-install-datya-security.hook.chroot iso/config/hooks/normal/0950-configure-desktop.hook.chroot
           bash -n security/signing/generate-mok.sh security/signing/sign-module.sh security/signing/enroll-mok.sh tools/issue-collab-token.sh
+          bash -n security/signing/create-test-signing-bundle.sh
           python3 -m py_compile tools/datya-collab-server.py tools/datya-debian-sync.py tools/datya-runner.py tools/datya-tool-catalog.py tools/datya-install-pack.py
           python3 -c 'import tomllib; tomllib.load(open("profiles/tool-packs.toml", "rb"))'
           python3 -m unittest discover -s tests -p 'test_*.py' -v

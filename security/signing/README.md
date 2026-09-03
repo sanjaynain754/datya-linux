@@ -37,6 +37,25 @@ Build against the exact target headers, not merely a similar kernel:
 make -C ../../kernel KDIR=/lib/modules/$(uname -r)/build
 ```
 
+## Disposable v0.1.1 test bundle
+
+For VM and disposable-hardware validation, the combined workflow can generate a test certificate, build the Guardian module against one exact kernel, sign it, and write hash evidence:
+
+```bash
+sudo ./create-test-signing-bundle.sh --build-module \
+  --kernel "$(uname -r)" \
+  --key-dir /root/datya-v0.1.1-test-signing
+```
+
+To generate and inspect test keys without building a module:
+
+```bash
+sudo ./create-test-signing-bundle.sh --generate-only \
+  --key-dir /root/datya-v0.1.1-test-signing
+```
+
+The combined script refuses to overwrite an existing key directory or unsigned backup, requires matching kernel headers and `sign-file`, keeps the private key at mode `0600`, and records the certificate fingerprint and module hash. It deliberately does not enroll the certificate, alter firmware settings, disable Secure Boot, or copy private material into the ISO. Enrollment must remain a separate, manually reviewed test step using `enroll-mok.sh` on hardware the administrator controls.
+
 ## 4. Sign the module
 
 ```bash
