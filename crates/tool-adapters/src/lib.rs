@@ -1,3 +1,6 @@
+use serde::Serialize;
+use sha2::{Digest, Sha256};
+use std::fmt::Write as FmtWrite;
 use std::fs::{self, File};
 use std::io;
 use std::path::{Path, PathBuf};
@@ -233,6 +236,200 @@ fn blocked(tool: &str, target: Option<&str>, reason: &str) -> ExecutionResult {
     }
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NmapMode {
+    DryRun,
+    Execute,
+}
+
+#[derive(Clone, Debug)]
+pub struct NmapPolicy {
+    pub mode: NmapMode,
+    pub authorized_targets: Vec<String>,
+    pub timeout: Duration,
+    pub max_output_bytes: usize,
+}
+
+impl Default for NmapPolicy {
+    fn default() -> Self {
+        Self {
+            mode: NmapMode::DryRun,
+            authorized_targets: Vec::new(),
+            timeout: Duration::from_secs(30),
+            max_output_bytes: 1024 * 1024,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+pub struct NmapAction {
+    pub schema: &'static str,
+    pub tool: &'static str,
+    pub target: String,
+    pub mode: &'static str,
+    pub status: &'static str,
+}
+
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+pub struct HashChainEvent {
+    pub sequence: u64,
+    pub action: NmapAction,
+    pub previous_hash: String,
+    pub hash: String,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct HashChainLog {
+    events: Vec<HashChainEvent>,
+}
+
+impl HashChainLog {
+    pub fn append(&mut self, action: NmapAction) {
+        let previous_hash = self
+            .events
+            .last()
+            .map(|event| event.hash.clone())
+            .unwrap_or_else(|| "0".repeat(64));
+        let sequence = self.events.len() as u64;
+        let canonical = format!(
+            "{}\\n{}\\n{}\\n{}",
+            sequence,
+            action_json(&action),
+            previous_hash,
+            action.status
+        );
+        let hash = hex_digest(canonical.as_bytes());
+        self.events.push(HashChainEvent {
+            sequence,
+            action,
+            previous_hash,
+            hash,
+        });
+    }
+
+    pub fn events(&self) -> &[HashChainEvent] {
+        &self.events
+    }
+
+    pub fn verify(&self) -> bool {
+        let mut previous = "0".repeat(64);
+        for (index, event) in self.events.iter().enumerate() {
+            if event.sequence != index as u64 || event.previous_hash != previous {
+                return false;
+            }
+            let canonical = format!(
+                "{}\\n{}\\n{}\\n{}",
+                event.sequence,
+                action_json(&event.action),
+                event.previous_hash,
+                event.action.status
+            );
+            if hex_digest(canonical.as_bytes()) != event.hash {
+                return false;
+            }
+            previous = event.hash.clone();
+        }
+        true
+    }
+}
+
+fn action_json(action: &NmapAction) -> String {
+    serde_json::to_string(action).expect("NmapAction serialization cannot fail")
+}
+
+fn hex_digest(data: &[u8]) -> String {
+    let mut output = String::with_capacity(64);
+    for byte in Sha256::digest(data) {
+        write!(&mut output, "{byte:02x}").expect("writing to String cannot fail");
+    }
+    output
+}
+
+fn valid_nmap_target(target: &str) -> bool {
+    safe_target(target) && !target.contains("..") && !target.contains('\0')
+}
+
+pub fn execute_nmap(
+    target: &str,
+    operator_confirmed: bool,
+    policy: &NmapPolicy,
+    log: &mut HashChainLog,
+) -> io::Result<NmapAction> {
+    let blocked = |log: &mut HashChainLog, reason: &str| {
+        let _ = reason;
+        let action = NmapAction {
+            schema: "datya.action.v1",
+            tool: "nmap",
+            target: target.to_string(),
+            mode: if operator_confirmed {
+                "execute"
+            } else {
+                "dry-run"
+            },
+            status: "blocked",
+        };
+        log.append(action.clone());
+        action
+    };
+
+    if !valid_nmap_target(target) || !policy.authorized_targets.iter().any(|item| item == target) {
+        return Ok(blocked(log, "target is outside the authorized scope"));
+    }
+    if !operator_confirmed || policy.mode == NmapMode::DryRun {
+        let action = NmapAction {
+            schema: "datya.action.v1",
+            tool: "nmap",
+            target: target.to_string(),
+            mode: "dry-run",
+            status: "planned",
+        };
+        log.append(action.clone());
+        return Ok(action);
+    }
+
+    let timeout = policy.timeout.min(Duration::from_secs(30));
+    let max_output_bytes = policy.max_output_bytes.min(1024 * 1024);
+    let output_dir = std::env::temp_dir();
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_or(0, |duration| duration.as_nanos());
+    let stdout_path = output_dir.join(format!("datya-nmap-{stamp}.out"));
+    let stderr_path = output_dir.join(format!("datya-nmap-{stamp}.err"));
+    let mut child = Command::new("/usr/bin/nmap")
+        .arg("--")
+        .arg(target)
+        .stdout(Stdio::from(File::create(&stdout_path)?))
+        .stderr(Stdio::from(File::create(&stderr_path)?))
+        .spawn()?;
+    let started = Instant::now();
+    let mut over_limit = false;
+    loop {
+        if child.try_wait()?.is_some() {
+            break;
+        }
+        let output_size = fs::metadata(&stdout_path).map_or(0, |meta| meta.len())
+            + fs::metadata(&stderr_path).map_or(0, |meta| meta.len());
+        if output_size > max_output_bytes as u64 || started.elapsed() >= timeout {
+            over_limit = output_size > max_output_bytes as u64;
+            child.kill()?;
+            let _ = child.wait();
+            break;
+        }
+        thread::sleep(Duration::from_millis(20));
+    }
+    let action = NmapAction {
+        schema: "datya.action.v1",
+        tool: "nmap",
+        target: target.to_string(),
+        mode: "execute",
+        status: if over_limit { "blocked" } else { "completed" },
+    };
+    log.append(action.clone());
+    let _ = fs::remove_file(stdout_path);
+    let _ = fs::remove_file(stderr_path);
+    Ok(action)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -280,5 +477,56 @@ mod tests {
         )
         .unwrap();
         assert!(matches!(result.decision, Decision::Blocked(_)));
+    }
+
+    fn nmap_policy(mode: NmapMode) -> NmapPolicy {
+        NmapPolicy {
+            mode,
+            authorized_targets: vec!["127.0.0.1".into()],
+            ..NmapPolicy::default()
+        }
+    }
+
+    #[test]
+    fn nmap_defaults_to_dry_run_and_emits_required_json() {
+        let mut log = HashChainLog::default();
+        let action = execute_nmap(
+            "127.0.0.1",
+            false,
+            &NmapPolicy {
+                authorized_targets: vec!["127.0.0.1".into()],
+                ..NmapPolicy::default()
+            },
+            &mut log,
+        )
+        .unwrap();
+        assert_eq!(action.mode, "dry-run");
+        assert_eq!(action.status, "planned");
+        assert_eq!(
+            serde_json::to_string(&action).unwrap(),
+            r#"{"schema":"datya.action.v1","tool":"nmap","target":"127.0.0.1","mode":"dry-run","status":"planned"}"#
+        );
+        assert!(log.verify());
+    }
+
+    #[test]
+    fn nmap_scope_is_checked_before_execution() {
+        let mut log = HashChainLog::default();
+        let action =
+            execute_nmap("192.0.2.1", true, &nmap_policy(NmapMode::Execute), &mut log).unwrap();
+        assert_eq!(action.mode, "execute");
+        assert_eq!(action.status, "blocked");
+        assert!(log.verify());
+    }
+
+    #[test]
+    fn nmap_hash_chain_detects_tampering() {
+        let mut log = HashChainLog::default();
+        let _ = execute_nmap("127.0.0.1", false, &nmap_policy(NmapMode::DryRun), &mut log);
+        let _ = execute_nmap("127.0.0.1", false, &nmap_policy(NmapMode::DryRun), &mut log);
+        assert_eq!(log.events().len(), 2);
+        assert!(log.verify());
+        log.events[1].action.status = "completed";
+        assert!(!log.verify());
     }
 }
