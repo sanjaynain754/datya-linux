@@ -34,7 +34,7 @@ static void datya_exec(void *ignore, struct task_struct *task, pid_t old_pid,
     if (!enabled || !bprm || !bprm->filename)
         return;
 
-    pr_info_ratelimited("datya_guardian event=exec pid=%d uid=%u path=%s\\n",
+    pr_info_ratelimited("datya_guardian event=exec pid=%d uid=%u path=%s\n",
                         task_pid_nr(task), __kuid_val(current_uid()),
                         bprm->filename);
 }
@@ -47,7 +47,7 @@ static void datya_socket_state(void *ignore, struct sock *sk,
     if (!enabled || !sk || sk->sk_family != AF_INET)
         return;
 
-    pr_info_ratelimited("datya_guardian event=socket pid=%d proto=%u old=%d new=%d\\n",
+    pr_info_ratelimited("datya_guardian event=socket pid=%d proto=%u old=%d new=%d\n",
                         task_pid_nr(current), sk->sk_protocol,
                         oldstate, newstate);
 }
@@ -66,7 +66,7 @@ static int __init datya_guardian_init(void)
         return ret;
     }
 
-    pr_info("datya_guardian loaded: read-only local evidence enabled\\n");
+    pr_info("datya_guardian loaded: read-only local evidence enabled\n");
     return 0;
 }
 
@@ -75,7 +75,7 @@ static void __exit datya_guardian_exit(void)
     unregister_trace_inet_sock_set_state(datya_socket_state, NULL);
     unregister_trace_sched_process_exec(datya_exec, NULL);
     tracepoint_synchronize_unregister();
-    pr_info("datya_guardian unloaded\\n");
+    pr_info("datya_guardian unloaded\n");
 }
 
 module_init(datya_guardian_init);
