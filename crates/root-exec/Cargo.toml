@@ -1,0 +1,8 @@
+[package]
+name = "datya-root-exec"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-2.0-or-later"
+description = "Explicit, auditable root-command execution boundary for Datya Linux"
+
+[dependencies]

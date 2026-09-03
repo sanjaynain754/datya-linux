@@ -1,3 +1,3 @@
 [workspace]
-members = ["crates/guardian", "crates/sensor", "crates/guardian-daemon", "crates/control-daemon", "crates/tool-adapters", "crates/collab-session"]
+members = ["crates/guardian", "crates/sensor", "crates/guardian-daemon", "crates/control-daemon", "crates/tool-adapters", "crates/collab-session", "crates/root-exec"]
 resolver = "2"

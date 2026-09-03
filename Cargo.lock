@@ -89,6 +89,10 @@ name = "datya-guardian-daemon"
 version = "0.1.0"
 
 [[package]]
+name = "datya-root-exec"
+version = "0.1.0"
+
+[[package]]
 name = "datya-sensor"
 version = "0.1.0"
 

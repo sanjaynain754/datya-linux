@@ -1,0 +1,53 @@
+{
+  "schema": "datya.module-index.v1",
+  "index_version": "0.1.0",
+  "generated": "source-controlled",
+  "categories": [
+    "observe",
+    "defend",
+    "forensics",
+    "privacy",
+    "network",
+    "reverse-engineering",
+    "wireless",
+    "cloud-code",
+    "cryptography",
+    "learning",
+    "productivity"
+  ],
+  "modules": [
+    {
+      "id": "nmap",
+      "package": "nmap",
+      "category": "network",
+      "summary": "Authorized network discovery and service enumeration",
+      "profiles": ["security-lab"],
+      "status": "packaged-and-tested",
+      "requires": ["explicit-scope", "operator-confirmation"],
+      "network_behavior": "network-capable",
+      "execution": "tool-adapter"
+    },
+    {
+      "id": "guardian-observe",
+      "package": "datya-guardian",
+      "category": "observe",
+      "summary": "Read-only local process and socket evidence",
+      "profiles": ["security-observe"],
+      "status": "prototype",
+      "requires": ["local-audit"],
+      "network_behavior": "local-only",
+      "execution": "daemon"
+    },
+    {
+      "id": "cryptographic-workbench",
+      "package": "datya-crypto-tools",
+      "category": "cryptography",
+      "summary": "User-controlled keys, certificates, trust stores and secure storage",
+      "profiles": ["power-user", "privacy"],
+      "status": "planned",
+      "requires": ["backup-before-change"],
+      "network_behavior": "local-only",
+      "execution": "sandbox-or-user"
+    }
+  ]
+}

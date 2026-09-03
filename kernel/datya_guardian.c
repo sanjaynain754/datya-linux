@@ -28,6 +28,10 @@ static bool enabled = true;
 module_param(enabled, bool, 0600);
 MODULE_PARM_DESC(enabled, "Enable Datya Guardian event collection (default: true)");
 
+static bool observe_ipv6;
+module_param(observe_ipv6, bool, 0600);
+MODULE_PARM_DESC(observe_ipv6, "Observe IPv6 socket state transitions (default: false)");
+
 static void datya_exec(void *ignore, struct task_struct *task, pid_t old_pid,
                        struct linux_binprm *bprm)
 {
@@ -44,11 +48,13 @@ static void datya_socket_state(void *ignore, struct sock *sk,
 {
     /* Only state transitions are recorded; payloads and packet contents are
      * never inspected. Userspace can apply policy and resolve addresses. */
-    if (!enabled || !sk || sk->sk_family != AF_INET)
+    if (!enabled || !sk)
+        return;
+    if (sk->sk_family != AF_INET && (!observe_ipv6 || sk->sk_family != AF_INET6))
         return;
 
-    pr_info_ratelimited("datya_guardian event=socket pid=%d proto=%u old=%d new=%d\n",
-                        task_pid_nr(current), sk->sk_protocol,
+    pr_info_ratelimited("datya_guardian event=socket family=%u pid=%d proto=%u old=%d new=%d\n",
+                        sk->sk_family, task_pid_nr(current), sk->sk_protocol,
                         oldstate, newstate);
 }
 
