@@ -20,6 +20,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 The example binds to loopback intentionally. A non-local deployment must put the listener behind TLS 1.3 or use a TLS-enabled listener integration, authenticate invite tokens through the deployment's token issuer, and restrict network access with an explicit scope policy. The crate does not provide certificate management or public-network authorization by itself.
 
+## TLS 1.3 listener
+
+For a local VM or disposable-hardware test, create a short-lived self-signed certificate outside the repository:
+
+```bash
+sudo ./security/signing/generate-collab-tls-cert.sh /root/datya-tls localhost
+```
+
+Load the certificate and key with `load_tls13_config` and pass the resulting configuration to `run_tls`:
+
+```rust,no_run
+use datya_collab_session::{websocket, CollaborationSession};
+use std::sync::Arc;
+use tokio::net::TcpListener;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let listener = TcpListener::bind("127.0.0.1:9443").await?;
+    let config = websocket::load_tls13_config("/root/datya-tls/server.crt", "/root/datya-tls/server.key")?;
+    websocket::run_tls(listener, CollaborationSession::new(), Arc::clone(&config)).await?;
+    Ok(())
+}
+```
+
+`run_tls` restricts the rustls server to TLS 1.3. The generated certificate is self-signed, expires after 30 days, and is for local testing only. Production deployments need administrator-controlled certificate distribution and rotation. Never commit the private key or place it in an ISO.
+
 ## Client messages
 
 A client first sends a text frame like this:

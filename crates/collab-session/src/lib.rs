@@ -364,9 +364,13 @@ pub mod websocket {
     use futures_util::{SinkExt, StreamExt};
     use serde::{Deserialize, Serialize};
     use std::collections::HashMap;
+    use std::io::{self, BufReader};
+    use std::path::Path;
     use std::sync::Arc;
-    use tokio::net::{TcpListener, TcpStream};
+    use tokio::io::{AsyncRead, AsyncWrite};
+    use tokio::net::TcpListener;
     use tokio::sync::{mpsc, Mutex};
+    use tokio_rustls::{rustls, TlsAcceptor};
     use tokio_tungstenite::{accept_async, tungstenite::Message};
 
     const MAX_FRAME_BYTES: usize = 64 * 1024;
@@ -432,11 +436,68 @@ pub mod websocket {
         }
     }
 
-    async fn handle_connection(
-        stream: TcpStream,
+    /// Accept WebSockets over TLS 1.3 only. Invite tokens authenticate operators.
+    pub async fn run_tls(
+        listener: TcpListener,
+        session: CollaborationSession,
+        config: Arc<rustls::ServerConfig>,
+    ) -> Result<(), WebSocketError> {
+        let acceptor = TlsAcceptor::from(config);
+        let shared = Arc::new(Mutex::new(session));
+        let clients: Clients = Arc::new(Mutex::new(HashMap::new()));
+        loop {
+            let (stream, _) = listener.accept().await?;
+            let acceptor = acceptor.clone();
+            let session = Arc::clone(&shared);
+            let clients = Arc::clone(&clients);
+            tokio::spawn(async move {
+                match acceptor.accept(stream).await {
+                    Ok(tls_stream) => {
+                        if let Err(error) = handle_connection(tls_stream, session, clients).await {
+                            eprintln!("secure collaboration websocket closed: {error}");
+                        }
+                    }
+                    Err(error) => eprintln!("TLS handshake rejected: {error}"),
+                }
+            });
+        }
+    }
+
+    /// Load PEM certificate/key files and restrict the server to TLS 1.3.
+    pub fn load_tls13_config(
+        cert_path: impl AsRef<Path>,
+        key_path: impl AsRef<Path>,
+    ) -> io::Result<Arc<rustls::ServerConfig>> {
+        let mut cert_reader = BufReader::new(std::fs::File::open(cert_path)?);
+        let certs = rustls_pemfile::certs(&mut cert_reader).collect::<Result<Vec<_>, _>>()?;
+        if certs.is_empty() {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "certificate PEM is empty",
+            ));
+        }
+        let mut key_reader = BufReader::new(std::fs::File::open(key_path)?);
+        let key = rustls_pemfile::private_key(&mut key_reader)?.ok_or_else(|| {
+            io::Error::new(io::ErrorKind::InvalidData, "private key PEM is missing")
+        })?;
+        let provider = Arc::new(rustls::crypto::ring::default_provider());
+        let config = rustls::ServerConfig::builder_with_provider(provider)
+            .with_protocol_versions(&[&rustls::version::TLS13])
+            .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error.to_string()))?
+            .with_no_client_auth()
+            .with_single_cert(certs, key)
+            .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error.to_string()))?;
+        Ok(Arc::new(config))
+    }
+
+    async fn handle_connection<S>(
+        stream: S,
         session: SharedSession,
         clients: Clients,
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>>
+    where
+        S: AsyncRead + AsyncWrite + Unpin + Send + 'static,
+    {
         let websocket = accept_async(stream).await?;
         let (mut sink, mut source) = websocket.split();
         let (sender, mut receiver) = mpsc::unbounded_channel::<Message>();
