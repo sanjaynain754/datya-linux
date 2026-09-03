@@ -25,6 +25,16 @@ The build configuration is an installable desktop prototype, not yet a signed st
 
 The ISO build currently compiles the C++ reference daemon and experimental Guardian module in a chroot. A production stable release must fail closed unless the module is signed with the project's trusted key and independently verified.
 
+## Automated release bundle
+
+`build-release.sh` is the end-to-end orchestrator. It runs Rust, C++, Python, shell, manifest, and Calamares checks; invokes the Debian live-build; copies the ISO; creates a Git source snapshot and release metadata; writes a complete `SHA256SUMS`; and verifies the resulting bundle. It does not upload, publish, or install anything.
+
+```bash
+sudo ./iso/build-release.sh amd64 trixie
+```
+
+The output is `releases/trixie-amd64/`. To add a detached GPG signature, set `DATYA_RELEASE_SIGNING_KEY` to a local key identifier. `DATYA_SKIP_TESTS=1` is available only for controlled debugging when build dependencies are unavailable. A successful script run is not by itself a stable-release approval: the release gates described above still require signed package metadata, real package checksums, Secure Boot validation, installer testing, and hardware testing.
+
 ## Calamares verification
 
 The Datya Calamares configuration is installed under `/etc/calamares` in the image. The verified workflow presents welcome, locale, keyboard, partition, user, and summary pages, then executes the reviewed installation jobs and shows a finished page. `prompt-install: true` requires an explicit confirmation before disk changes.

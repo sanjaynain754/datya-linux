@@ -8,3 +8,4 @@ security/signing/*.der
 target/
 build/
 __pycache__/
+releases/

@@ -51,6 +51,7 @@ jobs:
           bash -n iso/config/hooks/normal/0900-install-datya-security.hook.chroot
           bash -n iso/config/hooks/normal/0950-configure-desktop.hook.chroot
           bash -n iso/build-datya-iso.sh
+          bash -n iso/build-release.sh
           bash -n security/signing/generate-mok.sh
           bash -n security/signing/sign-module.sh
           bash -n security/signing/enroll-mok.sh
