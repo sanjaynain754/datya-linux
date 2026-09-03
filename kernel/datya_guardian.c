@@ -43,8 +43,8 @@ static void datya_exec(void *ignore, struct task_struct *task, pid_t old_pid,
                         bprm->filename);
 }
 
-static void datya_socket_state(void *ignore, struct sock *sk,
-                               int oldstate, int newstate)
+static void datya_socket_state(void *ignore, const struct sock *sk,
+                               const int oldstate, const int newstate)
 {
     /* Only state transitions are recorded; payloads and packet contents are
      * never inspected. Userspace can apply policy and resolve addresses. */

@@ -1,0 +1,26 @@
+[Unit]
+Description=Datya Guardian tracefs/eBPF-compatible local collector
+After=local-fs.target
+ConditionPathExists=/sys/kernel/tracing/trace_pipe
+
+[Service]
+Type=simple
+User=datya-guardian
+Group=datya-guardian
+ExecStart=/usr/bin/datya-guardian-collector --source tracefs
+StandardOutput=append:/var/lib/datya-guardian/events.jsonl
+StandardError=journal
+NoNewPrivileges=true
+PrivateNetwork=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/datya-guardian
+RestrictAddressFamilies=AF_UNIX
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+# Enable only after reviewing the target image, tracefs permissions, and local
+# evidence directory ownership. This service does not execute commands or open
+# network sockets.
