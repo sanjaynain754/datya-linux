@@ -15,7 +15,9 @@ The project aims to make privacy and system activity understandable without hidi
 
 ## Current status
 
-This repository contains the initial design documents and a small Rust prototype for collecting local network activity signals. It is **not yet a complete Linux distribution** and should not be used as a security boundary or production intrusion detector.
+Datya Linux v0.1.3 is a validated Debian Trixie amd64 live-image engineering release with an XFCE desktop, Calamares installation entry point, modular security-workbench components, strict package metadata validation, and documented hardware limits. It is not a universal hardware-support or production Secure Boot guarantee and should not be treated as a complete security boundary or production intrusion detector without independent review.
+
+Start with the [v0.1.3 release notes](docs/V0.1.3_RELEASE.md) and [hardware-support guide](docs/HARDWARE_SUPPORT.md) before building or installing the image.
 
 GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, shell syntax, private-key safeguards, and Datya policy markers on every push and pull request.
 
@@ -35,6 +37,8 @@ GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, 
 - [Secure Boot and kernel sensor](docs/SECURE_BOOT.md)
 - [Defensive hardening](docs/DEFENSIVE_HARDENING.md)
 - [Debian ISO builder](iso/README.md)
+- [v0.1.3 release notes](docs/V0.1.3_RELEASE.md)
+- [Hardware and device support](docs/HARDWARE_SUPPORT.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
 - [Dashboard prototype](dashboard/README.md)
@@ -55,7 +59,7 @@ Optional capability profiles are catalogued in `profiles/catalog.toml` and can b
 
 The read-only `tools/datya-security-audit.sh` checks filesystem permissions, ownership, SUID/SGID, writable paths, sensitive files, symlinks, ACLs, and available authentication-log indicators. It supports text and JSON reports and severity-based exit codes; it does not modify the system or prove historical access.
 
-The curated Debian package manifest is `packages/manifest.json`. Validate its structure with `python3 tools/verify-package-manifest.py packages/manifest.json`; release automation must use `--strict` only after real signed artifact checksums and review metadata replace the catalogued placeholders.
+The curated Debian package manifest is `packages/manifest.json`. Validate it with `python3 tools/verify-package-manifest.py packages/manifest.json --strict`; v0.1.3 records exact Debian artifact metadata and copyright-file audit evidence for 38 curated package records.
 
 `tools/datya-debian-sync.py` validates signed Debian `InRelease` metadata, package-index hashes/sizes, and curated package availability without installing packages. Its systemd service/timer templates support reviewed periodic metadata reports.
 
@@ -79,7 +83,7 @@ The first Developer Workspace runner prototype is available at `tools/datya-runn
 
 ## Target platforms
 
-The first supported targets are **x86_64** and **aarch64**. Raspberry Pi 5 and modern PCs/laptops are in scope; low-end hardware optimization is not a primary project goal. Apple hardware support will depend on upstream Linux support and device-specific firmware/driver work.
+The v0.1.3 published ISO targets **x86_64/amd64**. ARM64/aarch64 and Raspberry Pi 5 remain development targets without a published or hardware-validated v0.1.3 ISO. Modern PCs and laptops are the primary device class; Apple Silicon, 32-bit PCs, phones, tablets, and embedded boards are not supported by this release. See the [hardware-support guide](docs/HARDWARE_SUPPORT.md) for practical minimums.
 
 ## License
 

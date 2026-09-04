@@ -9,3 +9,27 @@ target/
 build/
 __pycache__/
 releases/
+
+# Live-build generated trees and release binaries are published as release assets,
+# not committed into the source repository.
+iso/.build/
+iso/cache/
+iso/chroot/
+iso/binary/
+iso/binary.hybrid.iso
+iso/binary.hybrid.iso.*
+iso/binary.contents
+iso/binary.packages
+iso/chroot.*
+iso/config/archives/
+iso/config/bootloaders/
+iso/config/binary
+iso/config/bootstrap
+iso/config/chroot
+iso/config/common
+iso/config/includes.chroot/etc/datya/
+iso/config/includes.chroot/etc/systemd/
+iso/config/includes.chroot/usr/
+iso/config/package-lists/
+iso/config/source
+iso/wget-log*

@@ -41,7 +41,7 @@ if [[ "$SKIP_TESTS" == 0 ]]; then for command in cargo cmake python3; do need "$
 [[ -f "$ROOT_DIR/packages/manifest.json" ]] || fail "package manifest missing"
 [[ -f "$ISO_DIR/auto/config" ]] || fail "live-build configuration missing"
 [[ -f "$ISO_DIR/build-datya-iso.sh" ]] || fail "ISO build entrypoint missing"
-for file in "$ISO_DIR/config/includes.chroot/etc/calamares/settings.conf" "$ISO_DIR/config/includes.chroot/etc/calamares/modules/partition.conf" "$ISO_DIR/config/includes.chroot/etc/calamares/branding/datya/branding.desc"; do
+for file in "$ISO_DIR/templates/calamares/settings.conf" "$ISO_DIR/templates/calamares/modules/partition.conf" "$ISO_DIR/templates/calamares/branding/datya/branding.desc"; do
   [[ -f "$file" ]] || fail "Calamares file missing: $file"
 done
 
@@ -54,7 +54,7 @@ if [[ "$SKIP_TESTS" == 0 ]]; then
   cmake --build build --parallel >/dev/null
   python3 -m py_compile tools/*.py tests/*.py
   python3 tools/verify-package-manifest.py packages/manifest.json
-  bash -n iso/build-datya-iso.sh iso/auto/config iso/config/hooks/normal/*.hook.chroot
+  bash -n iso/build-datya-iso.sh iso/auto/config iso/templates/hooks/normal/*.hook.chroot
   python3 - <<'PY'
 import json
 from pathlib import Path
@@ -64,7 +64,7 @@ try:
     import yaml
 except ImportError:
     raise SystemExit('python3-yaml is required for Calamares validation')
-root = Path('iso/config/includes.chroot/etc/calamares')
+root = Path('iso/templates/calamares')
 for path in root.rglob('*.conf'):
     yaml.safe_load(path.read_text(encoding='utf-8'))
 branding = yaml.safe_load((root / 'branding/datya/branding.desc').read_text(encoding='utf-8'))
@@ -84,7 +84,7 @@ fi
 BUILD_START="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "[2/6] Building Debian live image (${SUITE}/${ARCHITECTURE})"
 SOURCE_DATE_EPOCH="$SOURCE_DATE_EPOCH" bash "$ISO_DIR/build-datya-iso.sh" "$ARCHITECTURE" "$SUITE"
-mapfile -t ISO_FILES < <(find "$ISO_DIR/binary" -maxdepth 1 -type f -name '*.iso' -print | sort)
+mapfile -t ISO_FILES < <(find "$ISO_DIR" -maxdepth 1 -type f -name '*.iso' -print | sort)
 [[ "${#ISO_FILES[@]}" -eq 1 ]] || fail "expected exactly one ISO, found ${#ISO_FILES[@]}"
 ISO_PATH="${ISO_FILES[0]}"
 
@@ -92,7 +92,7 @@ rm -rf "$RELEASE_DIR"
 mkdir -p "$RELEASE_DIR/source" "$RELEASE_DIR/metadata"
 echo "[3/6] Collecting ISO and source bundle"
 cp -f "$ISO_PATH" "$RELEASE_DIR/Datya-Linux-v${DATYA_VERSION}-${SUITE}-${ARCHITECTURE}.iso"
-[[ -f "$ISO_DIR/SHA256SUMS" ]] && cp -f "$ISO_DIR/SHA256SUMS" "$RELEASE_DIR/metadata/live-build-SHA256SUMS"
+[[ -f "$ISO_DIR/binary/SHA256SUMS" ]] && cp -f "$ISO_DIR/binary/SHA256SUMS" "$RELEASE_DIR/metadata/live-build-SHA256SUMS"
 git archive --format=tar --prefix="datya-linux-${SUITE}-${ARCHITECTURE}/" HEAD | tar -xf - -C "$RELEASE_DIR/source"
 cat > "$RELEASE_DIR/metadata/release-info" <<EOF
 project=Datya Linux

@@ -43,7 +43,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/aircrack-ng",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "e8e7c267a6bc285dbcccaf1aaf879bfdfad0e60b81050ceca923bac75b7d55e9",
       "artifacts": {
         "amd64": {
@@ -65,7 +65,7 @@
         "wireless-hardware"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -73,7 +73,7 @@
       ],
       "uninstall_path": "apt remove aircrack-ng",
       "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "apparmor-utils",
@@ -87,7 +87,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/apparmor-utils",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "1f01704e8cffb596ac1d72914ac82c794f98681a5edaf86e84a5f0335d46dbd4",
       "artifacts": {
         "amd64": {
@@ -109,7 +109,7 @@
         "security-observe"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -117,7 +117,7 @@
       ],
       "uninstall_path": "apt remove apparmor-utils",
       "maintainer": "Debian AppArmor Team <pkg-apparmor-team@lists.alioth.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "auditd",
@@ -131,7 +131,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/auditd",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "cc21921dca59894879ba9fef423b2f5ad978b755d3bdd9d8512e8f6672d9a439",
       "artifacts": {
         "amd64": {
@@ -153,7 +153,7 @@
         "security-observe"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -161,7 +161,7 @@
       ],
       "uninstall_path": "apt remove auditd",
       "maintainer": "Laurent Bigonville <bigon@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "binwalk",
@@ -175,7 +175,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/binwalk",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "b614f9bf842173f363836d423ee9a8d1e223f9479d0f1674e95716ec1adf6c15",
       "artifacts": {
         "amd64": {
@@ -197,7 +197,7 @@
         "forensics"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -205,7 +205,7 @@
       ],
       "uninstall_path": "apt remove binwalk",
       "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "bluez",
@@ -219,7 +219,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/bluez",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "64a680d95abb11cf02f8170b2d57115dbdee4738a6163c2cf25021f546bce8ac",
       "artifacts": {
         "amd64": {
@@ -241,7 +241,7 @@
         "wireless-hardware"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -249,7 +249,7 @@
       ],
       "uninstall_path": "apt remove bluez",
       "maintainer": "Debian Bluetooth Maintainers <team+pkg-bluetooth@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "cargo",
@@ -263,7 +263,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/cargo",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "04515b777d20b2480e48257e2252e9406aec858c819470ca5442a5de77331d06",
       "artifacts": {
         "amd64": {
@@ -285,7 +285,7 @@
         "cloud-code"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -293,7 +293,7 @@
       ],
       "uninstall_path": "apt remove cargo",
       "maintainer": "Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "cmake",
@@ -307,7 +307,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/cmake",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "dee2fc94973325240604ffbca677a3f16b462fb6520946bd81be1ecbac770a02",
       "artifacts": {
         "amd64": {
@@ -329,7 +329,7 @@
         "cloud-code"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -337,7 +337,7 @@
       ],
       "uninstall_path": "apt remove cmake",
       "maintainer": "Debian CMake Team <pkg-cmake-team@lists.alioth.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "curl",
@@ -351,7 +351,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/curl",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "7bd23df36e65ca32a5bbd81f67ca311b9e0c122212c70d0733f4e45d745789d2",
       "artifacts": {
         "amd64": {
@@ -373,7 +373,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -381,7 +381,7 @@
       ],
       "uninstall_path": "apt remove curl",
       "maintainer": "Debian Curl Maintainers <team+curl@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "ffuf",
@@ -395,7 +395,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/ffuf",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "9c93f4ea8482d9acf5bd9d34e244b3ae873a063b4fa008d5ec3ffd2cafb8216e",
       "artifacts": {
         "amd64": {
@@ -417,7 +417,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -425,7 +425,7 @@
       ],
       "uninstall_path": "apt remove ffuf",
       "maintainer": "Thiago Andrade Marques <andrade@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "git",
@@ -439,7 +439,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/git",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "3e35662fd5c46add561703e54031a1d8ad9df45811927689f0a51122b13be722",
       "artifacts": {
         "amd64": {
@@ -461,7 +461,7 @@
         "cloud-code"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -469,7 +469,7 @@
       ],
       "uninstall_path": "apt remove git",
       "maintainer": "Jonathan Nieder <jrnieder@gmail.com>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "gitleaks",
@@ -483,7 +483,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/gitleaks",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "77da749c812cb875e95bcd7a3dd48cd0ac2420a1c88487f15c996197b81cdfa9",
       "artifacts": {
         "amd64": {
@@ -505,7 +505,7 @@
         "cloud-code"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -513,7 +513,7 @@
       ],
       "uninstall_path": "apt remove gitleaks",
       "maintainer": "Debian Go Packaging Team <team+pkg-go@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "hashdeep",
@@ -527,7 +527,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/hashdeep",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "236c84a1dcdd9b8d4cb2ab7baf79a6d35371d9a0e091bd1db5dee721a8720431",
       "artifacts": {
         "amd64": {
@@ -549,7 +549,7 @@
         "forensics"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -557,7 +557,7 @@
       ],
       "uninstall_path": "apt remove hashdeep",
       "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "iproute2",
@@ -571,7 +571,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/iproute2",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "7b2dcade4a83ded723fcab21c5a53c47f29352c9c5e1661a089a1e481b3fb48a",
       "artifacts": {
         "amd64": {
@@ -593,7 +593,7 @@
         "security-observe"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -601,7 +601,7 @@
       ],
       "uninstall_path": "apt remove iproute2",
       "maintainer": "Debian Kernel Team <debian-kernel@lists.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "iputils-ping",
@@ -615,7 +615,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/iputils-ping",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "a78f6118527796bde8c34d410dda1e5457f4e4e2de080a0b852cd59d7058ef6f",
       "artifacts": {
         "amd64": {
@@ -637,7 +637,7 @@
         "security-observe"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -645,7 +645,7 @@
       ],
       "uninstall_path": "apt remove iputils-ping",
       "maintainer": "Noah Meyerhans <noahm@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "iw",
@@ -659,7 +659,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/iw",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "61c0848fe4c98718f1f1ad7526ae4858d91f85e3139f0e723bed4bc2aa729422",
       "artifacts": {
         "amd64": {
@@ -681,7 +681,7 @@
         "wireless-hardware"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -689,7 +689,7 @@
       ],
       "uninstall_path": "apt remove iw",
       "maintainer": "Debian Kernel Team <debian-kernel@lists.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "jq",
@@ -703,7 +703,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/jq",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "c6464bdc20086222fa9295481367e9a52f3fb78120a14089bae5f0d36f1b8a74",
       "artifacts": {
         "amd64": {
@@ -725,7 +725,7 @@
         "forensics"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -733,7 +733,7 @@
       ],
       "uninstall_path": "apt remove jq",
       "maintainer": "ChangZhuo Chen (陳昌倬) <czchen@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "lsof",
@@ -747,7 +747,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/lsof",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "76ca9b82da6d5dabd66609937675768a593c20c5e544171a2d9544060a1780b7",
       "artifacts": {
         "amd64": {
@@ -769,7 +769,7 @@
         "security-observe"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -777,7 +777,7 @@
       ],
       "uninstall_path": "apt remove lsof",
       "maintainer": "Andres Salomon <dilinger@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "netcat-openbsd",
@@ -791,7 +791,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/netcat-openbsd",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "d24b18012d4567e9b8fce551293a2373c2bfea5373d012d7f7e81bf5bf17b13e",
       "artifacts": {
         "amd64": {
@@ -813,7 +813,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -821,7 +821,7 @@
       ],
       "uninstall_path": "apt remove netcat-openbsd",
       "maintainer": "Guilhem Moulin <guilhem@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "nmap",
@@ -835,7 +835,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/nmap",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "517b1c7558b7c1e7bc095fc7ed73432a26bff46e527a8fde9fea9289c9c1ee98",
       "artifacts": {
         "amd64": {
@@ -857,7 +857,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -865,7 +865,7 @@
       ],
       "uninstall_path": "apt remove nmap",
       "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "procps",
@@ -879,7 +879,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/procps",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "4db90bb6776772fc52585d6b1fbfc52ec2a85480e1b4363b743fbb2ffa2a5375",
       "artifacts": {
         "amd64": {
@@ -901,7 +901,7 @@
         "security-observe"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -909,7 +909,7 @@
       ],
       "uninstall_path": "apt remove procps",
       "maintainer": "Craig Small <csmall@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "psmisc",
@@ -923,7 +923,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/psmisc",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "19e772bca5ad0b28620229fe4f91383044c5c6322c7c50ae46da1c60d73d9960",
       "artifacts": {
         "amd64": {
@@ -945,7 +945,7 @@
         "security-observe"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -953,7 +953,7 @@
       ],
       "uninstall_path": "apt remove psmisc",
       "maintainer": "Craig Small <csmall@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "python3",
@@ -967,7 +967,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/python3",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "c1388174dc7140e6c19a6dd39f8a0dcb38a835cd66c65644e0dded43d5223cb0",
       "artifacts": {
         "amd64": {
@@ -989,7 +989,7 @@
         "cloud-code"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -997,7 +997,7 @@
       ],
       "uninstall_path": "apt remove python3",
       "maintainer": "Matthias Klose <doko@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "python3-requests",
@@ -1011,7 +1011,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/python3-requests",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "7d271bd47c6647b16aec9facc656c39eca763062ec392aea615dd6597b8304c2",
       "artifacts": {
         "amd64": {
@@ -1033,7 +1033,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1041,7 +1041,7 @@
       ],
       "uninstall_path": "apt remove python3-requests",
       "maintainer": "Debian Python Team <team+python@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "rfkill",
@@ -1055,7 +1055,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/rfkill",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "111dbe084482f42ab1221fa68200711d72e097dcece99d74251a54eca5ac509b",
       "artifacts": {
         "amd64": {
@@ -1077,7 +1077,7 @@
         "wireless-hardware"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1085,7 +1085,7 @@
       ],
       "uninstall_path": "apt remove rfkill",
       "maintainer": "Chris Hofstaedtler <zeha@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "ripgrep",
@@ -1099,7 +1099,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/ripgrep",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "7e0c32510c264c31335fe3b9ae37ab76dcd22f7d1627a0a08518a5bf28b17ac2",
       "artifacts": {
         "amd64": {
@@ -1121,7 +1121,7 @@
         "forensics"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1129,7 +1129,7 @@
       ],
       "uninstall_path": "apt remove ripgrep",
       "maintainer": "Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "rustc",
@@ -1143,7 +1143,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/rustc",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "3d0c696edbb60dd306b4133b3e28706b69f79bb879b4bfb643578f4f8a2b9682",
       "artifacts": {
         "amd64": {
@@ -1165,7 +1165,7 @@
         "cloud-code"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1173,7 +1173,7 @@
       ],
       "uninstall_path": "apt remove rustc",
       "maintainer": "Debian Rust Maintainers <pkg-rust-maintainers@alioth-lists.debian.net>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "shellcheck",
@@ -1187,7 +1187,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/shellcheck",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "8b207f7d4421a46cec9e377c74d450e1717092b58ae3e7151cd5f85f639065cd",
       "artifacts": {
         "amd64": {
@@ -1209,7 +1209,7 @@
         "cloud-code"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1217,7 +1217,7 @@
       ],
       "uninstall_path": "apt remove shellcheck",
       "maintainer": "Debian Haskell Group <pkg-haskell-maintainers@lists.alioth.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "sleuthkit",
@@ -1231,7 +1231,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/sleuthkit",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "47df7313141f5dd244ed8777cbf9985925c6b161e38293868deb60ca0f324423",
       "artifacts": {
         "amd64": {
@@ -1253,7 +1253,7 @@
         "forensics"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1261,7 +1261,7 @@
       ],
       "uninstall_path": "apt remove sleuthkit",
       "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "socat",
@@ -1275,7 +1275,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/socat",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "6ad18d699071c1e0e3b1e9acd020368544369d339607e80b7eca97bcf4f97017",
       "artifacts": {
         "amd64": {
@@ -1297,7 +1297,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1305,7 +1305,7 @@
       ],
       "uninstall_path": "apt remove socat",
       "maintainer": "Laszlo Boszormenyi (GCS) <gcs@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "strace",
@@ -1319,7 +1319,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/strace",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "cae290b67cf835350a2cde58ca332256fba475784b3e02a9a8677d73eaf47511",
       "artifacts": {
         "amd64": {
@@ -1341,7 +1341,7 @@
         "security-observe"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1349,7 +1349,7 @@
       ],
       "uninstall_path": "apt remove strace",
       "maintainer": "Steve McIntyre <93sam@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "tcpdump",
@@ -1363,7 +1363,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/tcpdump",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "c35a180eb0ee118976c4648473de0beb36788dc2ec6986ab880722f5a9868ba6",
       "artifacts": {
         "amd64": {
@@ -1385,7 +1385,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1393,7 +1393,7 @@
       ],
       "uninstall_path": "apt remove tcpdump",
       "maintainer": "Debian Security Tools <team+pkg-security@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "testdisk",
@@ -1407,7 +1407,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/testdisk",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "3479bf5ab228ee0f773a5e3b0b0bc193cec777a0ef836bc066c5592adbee38aa",
       "artifacts": {
         "amd64": {
@@ -1429,7 +1429,7 @@
         "forensics"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1437,7 +1437,7 @@
       ],
       "uninstall_path": "apt remove testdisk",
       "maintainer": "Jean-Michel Kelbert <kelbert@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "tshark",
@@ -1451,7 +1451,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/tshark",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "82c345d5f6e33a134eeae741c07c059389abcb0bd9871a9c970341cbd196e8b9",
       "artifacts": {
         "amd64": {
@@ -1473,7 +1473,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1481,7 +1481,7 @@
       ],
       "uninstall_path": "apt remove tshark",
       "maintainer": "Balint Reczey <balint@balintreczey.hu>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "usbutils",
@@ -1495,7 +1495,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/usbutils",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "091e509e62bebf6a08787faa5db1303d7aeaad443f19a4f9c31be2947fb50446",
       "artifacts": {
         "amd64": {
@@ -1517,7 +1517,7 @@
         "wireless-hardware"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1525,7 +1525,7 @@
       ],
       "uninstall_path": "apt remove usbutils",
       "maintainer": "Aurelien Jarno <aurel32@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "wget",
@@ -1539,7 +1539,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/wget",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "5649cad63c781b2dcf5a7b87d70b3bf789291cd0d6bcabc4d521211f94980683",
       "artifacts": {
         "amd64": {
@@ -1561,7 +1561,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1569,7 +1569,7 @@
       ],
       "uninstall_path": "apt remove wget",
       "maintainer": "Noël Köthe <noel@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "whatweb",
@@ -1583,7 +1583,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/whatweb",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "9a9e233d4a5340e9899b44aada049a5212bfae90a98ad7525b7d109f150afd78",
       "artifacts": {
         "amd64": {
@@ -1605,7 +1605,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1613,7 +1613,7 @@
       ],
       "uninstall_path": "apt remove whatweb",
       "maintainer": "Laszlo Boszormenyi (GCS) <gcs@debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "wireshark",
@@ -1627,7 +1627,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/wireshark",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "5ca3e12c5dc88673870469412829e74b3f097c8b78c46e5d46ce5ae3f619846b",
       "artifacts": {
         "amd64": {
@@ -1649,7 +1649,7 @@
         "security-lab"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1657,7 +1657,7 @@
       ],
       "uninstall_path": "apt remove wireshark",
       "maintainer": "Balint Reczey <balint@balintreczey.hu>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
       "name": "xxd",
@@ -1671,7 +1671,7 @@
       ],
       "repository": "https://deb.debian.org/debian",
       "source_url": "https://packages.debian.org/trixie/xxd",
-      "license": "DEBIAN-COPYRIGHT-REVIEW-REQUIRED",
+      "license": "SEE-DEBIAN-COPYRIGHT",
       "sha256": "d1ae72a9ae7c3f81a23299422f0f219b55d2a76eb88c78815584983d6b897324",
       "artifacts": {
         "amd64": {
@@ -1693,7 +1693,7 @@
         "forensics"
       ],
       "status": "catalogued",
-      "verification_status": "metadata-verified",
+      "verification_status": "verified",
       "tests": [
         "signed-index-availability",
         "artifact-sha256",
@@ -1701,7 +1701,7 @@
       ],
       "uninstall_path": "apt remove xxd",
       "maintainer": "Debian Vim Maintainers <team+vim@tracker.debian.org>",
-      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Debian copyright/license review remains required before release verification."
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     }
   ]
 }

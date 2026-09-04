@@ -1,0 +1,50 @@
+#!/bin/sh
+set -eu
+
+SRC=/usr/src/datya
+PREFIX=/usr/lib/datya
+mkdir -p "$PREFIX" /etc/datya /var/lib/datya
+
+# Build the C++ daemon against the target image's libraries.
+cmake -S "$SRC/cpp-control" -B /tmp/datya-cpp-build -DCMAKE_BUILD_TYPE=Release
+cmake --build /tmp/datya-cpp-build --parallel "$(nproc)"
+install -m 0755 /tmp/datya-cpp-build/datya-control "$PREFIX/datya-control"
+
+# Build the module against the exact kernel headers installed in this image.
+KERNEL_VERSION="$(ls -1 /lib/modules | sort -V | tail -n 1)"
+if [ -z "$KERNEL_VERSION" ] || [ ! -d "/lib/modules/$KERNEL_VERSION/build" ]; then
+    echo "Datya: kernel headers missing for $KERNEL_VERSION" >&2
+    exit 1
+fi
+make -C "$SRC/kernel" KDIR="/lib/modules/$KERNEL_VERSION/build"
+install -D -m 0644 "$SRC/kernel/datya_guardian.ko" "/lib/modules/$KERNEL_VERSION/extra/datya_guardian.ko"
+depmod -a "$KERNEL_VERSION"
+
+# A release build must provide a signing key. Unsigned modules are intentionally
+# not loaded when Secure Boot policy is active.
+if [ -n "${DATYA_MODULE_KEY:-}" ] && [ -n "${DATYA_MODULE_CERT:-}" ]; then
+    SIGN_FILE="/usr/lib/linux-kbuild-$KERNEL_VERSION/scripts/sign-file"
+    [ -x "$SIGN_FILE" ] || SIGN_FILE="/usr/src/linux-headers-$KERNEL_VERSION/scripts/sign-file"
+    [ -x "$SIGN_FILE" ] || { echo "Datya: sign-file not found" >&2; exit 1; }
+    "$SIGN_FILE" sha256 "$DATYA_MODULE_KEY" "$DATYA_MODULE_CERT" "/lib/modules/$KERNEL_VERSION/extra/datya_guardian.ko"
+    depmod -a "$KERNEL_VERSION"
+else
+    echo "Datya: module staged unsigned; Secure Boot profile must reject loading it" >&2
+fi
+
+# Copy policy and source provenance into the image without private keys.
+cat > /etc/datya/policy <<'POLICY'
+telemetry=disabled-by-default
+remote-reporting=disabled-by-default
+kernel-module-policy=signed-only
+assessment=requires-explicit-scope
+POLICY
+
+# Dedicated service account and strict file permissions.
+if ! getent group datya-guardian >/dev/null; then groupadd --system datya-guardian; fi
+if ! getent passwd datya-guardian >/dev/null; then useradd --system --gid datya-guardian --no-create-home --shell /usr/sbin/nologin datya-guardian; fi
+chown -R root:root "$PREFIX" /etc/datya
+chmod 0755 "$PREFIX/datya-control"
+chmod 0700 /var/lib/datya
+rm -rf /tmp/datya-cpp-build
+rm -rf "$SRC"

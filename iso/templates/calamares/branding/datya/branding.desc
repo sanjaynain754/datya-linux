@@ -1,0 +1,11 @@
+componentName: datya
+welcomeStyle: sidebar
+strings:
+  productName: Datya Linux
+  shortProductName: Datya
+  version: "0.1 Observe Edition"
+  shortVersion: "0.1"
+  versionedName: "Datya Linux 0.1 Observe Edition"
+  shortVersionedName: "Datya Linux"
+  bootloaderEntryName: datya
+  productUrl: https://github.com/sanjaynain754/datya-linux

@@ -36,9 +36,9 @@ need_file() { [[ -f "$1" ]] || fail "missing file: $1"; }
 
 need_file "$ISO_DIR/auto/config"
 need_file "$ISO_DIR/build-datya-iso.sh"
-need_file "$ISO_DIR/config/includes.chroot/etc/calamares/settings.conf"
-need_file "$ISO_DIR/config/includes.chroot/etc/calamares/modules/partition.conf"
-need_file "$ISO_DIR/config/includes.chroot/etc/calamares/branding/datya/branding.desc"
+need_file "$ISO_DIR/templates/calamares/settings.conf"
+need_file "$ISO_DIR/templates/calamares/modules/partition.conf"
+need_file "$ISO_DIR/templates/calamares/branding/datya/branding.desc"
 
 if [[ "$INSTALL_DEPS" == 1 ]]; then
   [[ "$(id -u)" -eq 0 ]] || fail "run with sudo to install dependencies"
@@ -65,7 +65,7 @@ try:
     import yaml
 except ImportError:
     raise SystemExit("python3-yaml is required; install it or use the host dependency mode")
-root = Path(sys.argv[1]) / "config/includes.chroot/etc/calamares"
+root = Path(sys.argv[1]) / "templates/calamares"
 for path in root.rglob("*.conf"):
     yaml.safe_load(path.read_text(encoding="utf-8"))
 branding = yaml.safe_load((root / "branding/datya/branding.desc").read_text(encoding="utf-8"))
@@ -81,7 +81,7 @@ assert partition["efi"]["mountPoint"] == "/boot/efi"
 print("Calamares YAML and Datya safety settings valid")
 PY
 
-grep -q -- '--debian-installer live' "$ISO_DIR/auto/config" || fail "live installer mode is not enabled"
+grep -q -- '--debian-installer false' "$ISO_DIR/auto/config" || fail "Calamares live-image installer mode is not selected"
 grep -q 'calamares' "$ISO_DIR/build-datya-iso.sh" || fail "Calamares is not in the ISO package list"
 grep -q 'xfce4' "$ISO_DIR/build-datya-iso.sh" || fail "XFCE is not in the ISO package list"
 
