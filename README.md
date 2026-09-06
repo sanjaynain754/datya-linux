@@ -1,5 +1,8 @@
 # Datya Linux
 
+[![CI](https://github.com/sanjaynain754/datya-linux/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sanjaynain754/datya-linux/actions/workflows/ci.yml) [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE) [![Version: v0.1.3](https://img.shields.io/badge/version-v0.1.3-0ea5e9.svg)](VERSION) [![Security Policy](https://img.shields.io/badge/security-policy-SECURITY.md-16a34a.svg)](SECURITY.md)
+
+
 **Datya Linux** is an open, security-first **general-purpose Linux distribution** with a built-in cybersecurity workbench for ethical hackers, blue teams, incident responders, security learners, researchers, developers, administrators, and everyday users using modern laptops, desktops, workstations, Raspberry Pi 5, and other capable x86_64/ARM64 systems.
 
 The project aims to make privacy and system activity understandable without hiding the controls from the user. Datya will ship with no telemetry by default, transparent security signals, verifiable updates, and a modular design that people can customize and redistribute. It is a general-purpose operating system, not a guarantee that every use or outcome can be controlled by its maintainers.
@@ -17,7 +20,19 @@ The project aims to make privacy and system activity understandable without hidi
 
 Datya Linux v0.1.3 is a validated Debian Trixie amd64 live-image engineering release with an XFCE desktop, Calamares installation entry point, modular security-workbench components, strict package metadata validation, and documented hardware limits. It is not a universal hardware-support or production Secure Boot guarantee and should not be treated as a complete security boundary or production intrusion detector without independent review.
 
-Start with the [v0.1.3 release notes](docs/V0.1.3_RELEASE.md) and [hardware-support guide](docs/HARDWARE_SUPPORT.md) before building or installing the image.
+Start with the [v0.1.3 release notes](docs/V0.1.3_RELEASE.md), [hardware-support guide](docs/HARDWARE_SUPPORT.md), and [security policy](SECURITY.md) before building or installing the image.
+
+## See Datya Linux
+
+The project’s current visual direction is shown below. These are repository assets, not claims that every panel is already implemented in the published ISO.
+
+![Datya Linux cybersecurity desktop](datya-cybersecurity-desktop.png)
+
+*Datya Linux cybersecurity workbench concept: authorized scope, evidence controls, tool ecosystem, terminal, and system posture.*
+
+![Datya Security Workbench dashboard](datya-security-dashboard.png)
+
+*Datya Security Workbench dashboard concept: event graph, scope and consent state, offline lab, tooling status, and evidence logs.*
 
 GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, shell syntax, private-key safeguards, and Datya policy markers on every push and pull request.
 
@@ -60,7 +75,7 @@ Optional capability profiles are catalogued in `profiles/catalog.toml` and can b
 
 The read-only `tools/datya-security-audit.sh` checks filesystem permissions, ownership, SUID/SGID, writable paths, sensitive files, symlinks, ACLs, and available authentication-log indicators. It supports text and JSON reports and severity-based exit codes; it does not modify the system or prove historical access.
 
-The curated Debian package manifest is `packages/manifest.json`. Validate it with `python3 tools/verify-package-manifest.py packages/manifest.json --strict`; v0.1.3 records exact Debian artifact metadata and copyright-file audit evidence for 38 curated package records.
+The curated Debian package manifest is `packages/manifest.json`. Validate it with `python3 tools/verify-package-manifest.py packages/manifest.json --strict`; the current source records exact artifact metadata and copyright-file audit evidence for 39 curated package records.
 
 `tools/datya-debian-sync.py` validates signed Debian `InRelease` metadata, package-index hashes/sizes, and curated package availability without installing packages. Its systemd service/timer templates support reviewed periodic metadata reports.
 
@@ -87,5 +102,6 @@ The first Developer Workspace runner prototype is available at `tools/datya-runn
 The v0.1.3 published ISO targets **x86_64/amd64**. ARM64/aarch64 and Raspberry Pi 5 remain development targets without a published or hardware-validated v0.1.3 ISO. Modern PCs and laptops are the primary device class; Apple Silicon, 32-bit PCs, phones, tablets, and embedded boards are not supported by this release. See the [hardware-support guide](docs/HARDWARE_SUPPORT.md) for practical minimums.
 
 ## License
+The repository includes the [GNU General Public License v3.0](LICENSE) as its project-level distribution license. Some components retain explicit component-level declarations, including Apache-2.0 Rust crates and GPL-2.0-or-later kernel/root-exec code; those declarations govern the applicable component. Third-party packages, artwork, firmware, and upstream tools may carry their own licenses, so consult their respective notices and the package manifest before redistribution.
 
-The licensing model is not finalized yet. Until it is, contributions should preserve the project's open-source and transparent intent.
+Security reports should follow the [responsible-disclosure policy](SECURITY.md).

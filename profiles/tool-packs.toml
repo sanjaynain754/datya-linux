@@ -6,7 +6,7 @@ version = 1
 [pack.observe]
 summary = "Read-only local posture, process, network, and log visibility"
 profile = "security-observe"
-tools = ["procps", "psmisc", "iproute2", "iputils-ping", "dnsutils", "lsof", "strace", "auditd", "apparmor-utils"]
+tools = ["procps", "psmisc", "iproute2", "iputils-ping", "bind9-dnsutils", "lsof", "strace", "auditd", "apparmor-utils"]
 
 [pack.forensics]
 summary = "Evidence collection and offline filesystem timeline workflows"

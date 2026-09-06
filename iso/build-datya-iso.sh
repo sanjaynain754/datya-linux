@@ -91,7 +91,7 @@ ca-certificates gnupg unzip
 syslinux-utils
 openssh-client
 network-manager
-procps psmisc iproute2 iputils-ping dnsutils curl
+procps psmisc iproute2 iputils-ping bind9-dnsutils curl
 python3
 rustc cargo
 build-essential cmake pkg-config libssl-dev kmod

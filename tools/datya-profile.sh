@@ -8,7 +8,7 @@ if [[ "${1:-}" == "--dry-run" ]]; then DRY_RUN=1; shift; fi
 PROFILE="${1:-}"
 case "$PROFILE" in
   desktop) PACKAGES=(task-desktop sudo network-manager apparmor) ;;
-  security-observe) PACKAGES=(procps psmisc iproute2 iputils-ping dnsutils curl kmod apparmor-utils) ;;
+  security-observe) PACKAGES=(procps psmisc iproute2 iputils-ping bind9-dnsutils curl kmod apparmor-utils) ;;
   security-lab) PACKAGES=(podman bubblewrap systemd-container) ;;
   forensics) PACKAGES=(sleuthkit testdisk hashdeep) ;;
   wireless-hardware) PACKAGES=(iw rfkill bluez usbutils) ;;
