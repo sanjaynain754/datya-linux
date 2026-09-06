@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased — RustScan integration
+
+- Added pinned RustScan 2.4.1 official release assets for amd64 and arm64 with recorded SHA-256 values.
+- Added the `rustscan-network-scan` catalog route with dry-run default, explicit authorized scope, operator confirmation, bounded execution, and local hash-chain evidence.
+- Added RustScan to the opt-in `security-lab` network pack; no startup service, timer, or automatic Nmap handoff is created.
+- Added a checksum-verifying ISO hook and RustScan integration guide.
+- Made the Guardian kernel sensor fallback explicit when Debian’s generic kernel does not export the required tracepoints; the userspace collector remains the supported evidence path in that case.
+
 ## v0.1.3 — 2026-09-04
 
 This engineering release publishes the first validated Debian Trixie amd64 live image for Datya Linux and documents its practical hardware target instead of overstating unverified device support.

@@ -2,7 +2,7 @@
 set -eu
 
 # Desktop and graphical login defaults for the installable Datya image.
-mkdir -p /etc/systemd/system/graphical.target.wants /etc/lightdm
+mkdir -p /etc/systemd/system/graphical.target.wants /etc/lightdm/lightdm.conf.d
 ln -sf /lib/systemd/system/lightdm.service /etc/systemd/system/display-manager.service
 ln -sf /lib/systemd/system/graphical.target /etc/systemd/system/default.target
 cat > /etc/lightdm/lightdm.conf.d/50-datya.conf <<'EOF'

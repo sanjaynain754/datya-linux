@@ -39,6 +39,7 @@ GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, 
 - [Debian ISO builder](iso/README.md)
 - [v0.1.3 release notes](docs/V0.1.3_RELEASE.md)
 - [Hardware and device support](docs/HARDWARE_SUPPORT.md)
+- [RustScan integration](docs/RUSTSCAN_INTEGRATION.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Contributing](CONTRIBUTING.md)
 - [Dashboard prototype](dashboard/README.md)

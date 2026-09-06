@@ -16,20 +16,28 @@ if [ -z "$KERNEL_VERSION" ] || [ ! -d "/lib/modules/$KERNEL_VERSION/build" ]; th
     echo "Datya: kernel headers missing for $KERNEL_VERSION" >&2
     exit 1
 fi
-make -C "$SRC/kernel" KDIR="/lib/modules/$KERNEL_VERSION/build"
-install -D -m 0644 "$SRC/kernel/datya_guardian.ko" "/lib/modules/$KERNEL_VERSION/extra/datya_guardian.ko"
-depmod -a "$KERNEL_VERSION"
-
-# A release build must provide a signing key. Unsigned modules are intentionally
-# not loaded when Secure Boot policy is active.
-if [ -n "${DATYA_MODULE_KEY:-}" ] && [ -n "${DATYA_MODULE_CERT:-}" ]; then
-    SIGN_FILE="/usr/lib/linux-kbuild-$KERNEL_VERSION/scripts/sign-file"
-    [ -x "$SIGN_FILE" ] || SIGN_FILE="/usr/src/linux-headers-$KERNEL_VERSION/scripts/sign-file"
-    [ -x "$SIGN_FILE" ] || { echo "Datya: sign-file not found" >&2; exit 1; }
-    "$SIGN_FILE" sha256 "$DATYA_MODULE_KEY" "$DATYA_MODULE_CERT" "/lib/modules/$KERNEL_VERSION/extra/datya_guardian.ko"
+# Debian generic kernels may not export every tracepoint to external modules.
+# Keep the ISO build truthful and usable: the userspace collector remains the
+# supported evidence path when this optional kernel sensor cannot link.
+if make -C "$SRC/kernel" KDIR="/lib/modules/$KERNEL_VERSION/build"; then
+    install -D -m 0644 "$SRC/kernel/datya_guardian.ko" "/lib/modules/$KERNEL_VERSION/extra/datya_guardian.ko"
     depmod -a "$KERNEL_VERSION"
+
+    # A release build must provide a signing key. Unsigned modules are
+    # intentionally not loaded when Secure Boot policy is active.
+    if [ -n "${DATYA_MODULE_KEY:-}" ] && [ -n "${DATYA_MODULE_CERT:-}" ]; then
+        SIGN_FILE="/usr/lib/linux-kbuild-$KERNEL_VERSION/scripts/sign-file"
+        [ -x "$SIGN_FILE" ] || SIGN_FILE="/usr/src/linux-headers-$KERNEL_VERSION/scripts/sign-file"
+        [ -x "$SIGN_FILE" ] || { echo "Datya: sign-file not found" >&2; exit 1; }
+        "$SIGN_FILE" sha256 "$DATYA_MODULE_KEY" "$DATYA_MODULE_CERT" "/lib/modules/$KERNEL_VERSION/extra/datya_guardian.ko"
+        depmod -a "$KERNEL_VERSION"
+    else
+        echo "Datya: module staged unsigned; Secure Boot profile must reject loading it" >&2
+    fi
 else
-    echo "Datya: module staged unsigned; Secure Boot profile must reject loading it" >&2
+    rm -f "$SRC/kernel/datya_guardian.ko"
+    printf '%s\n' "kernel-module=unavailable-on-target; userspace-collector=active" > /etc/datya/guardian-kernel-module
+    echo "Datya: Guardian kernel module unavailable on this kernel; userspace collector remains active" >&2
 fi
 
 # Copy policy and source provenance into the image without private keys.
@@ -37,6 +45,7 @@ cat > /etc/datya/policy <<'POLICY'
 telemetry=disabled-by-default
 remote-reporting=disabled-by-default
 kernel-module-policy=signed-only
+kernel-module-fallback=userspace-collector
 assessment=requires-explicit-scope
 POLICY
 

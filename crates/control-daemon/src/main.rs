@@ -1,6 +1,7 @@
+use datya_tool_adapters::{execute_rustscan, RustScanHashChainLog, RustScanMode, RustScanPolicy};
 use std::collections::BTreeSet;
 use std::io::{self, BufRead, Write};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 #[derive(Clone, Debug)]
 struct Tool {
@@ -14,6 +15,7 @@ struct Tool {
 struct ControlState {
     authorized_targets: BTreeSet<String>,
     dry_run: bool,
+    rustscan_log: RustScanHashChainLog,
 }
 
 const CATALOG: &[Tool] = &[
@@ -39,6 +41,12 @@ const CATALOG: &[Tool] = &[
         id: "service-inventory",
         category: "discovery",
         description: "Enumerate services in an authorized scope",
+        needs_network: true,
+    },
+    Tool {
+        id: "rustscan-network-scan",
+        category: "network",
+        description: "Fast port discovery for an explicitly authorized target",
         needs_network: true,
     },
     Tool {
@@ -426,7 +434,7 @@ fn find_tool(id: &str) -> Option<&'static Tool> {
 }
 
 fn print_help() {
-    println!("commands: help | tools [category] | scope add <target> | scope list | run <tool> <target> | mode dry-run|execute | quit");
+    println!("commands: help | tools [category] | scope add <target> | scope list | run <tool> <target> [--confirm] | mode dry-run|execute | quit");
 }
 
 fn run_command(line: &str, state: &mut ControlState) -> bool {
@@ -473,16 +481,55 @@ fn run_command(line: &str, state: &mut ControlState) -> bool {
         Some("run") => {
             let id = words.next();
             let target = words.next();
-            match (id.and_then(find_tool), target) {
-                (Some(tool), Some(target))
-                    if !tool.needs_network || state.authorized_targets.contains(target) =>
-                {
-                    let ts = SystemTime::now()
-                        .duration_since(UNIX_EPOCH)
-                        .map_or(0, |d| d.as_secs());
-                    println!("{{\"schema\":\"datya.action.v1\",\"timestamp\":{},\"tool\":\"{}\",\"target\":\"{}\",\"mode\":\"{}\",\"status\":\"{}\"}}", ts, tool.id, target, if state.dry_run { "dry-run" } else { "execute" }, if state.dry_run { "planned" } else { "queued-for-policy-adapter" });
+            let operator_confirmed = words.any(|word| word == "--confirm");
+            match (id, target) {
+                (Some("rustscan-network-scan"), Some(target)) => {
+                    let policy = RustScanPolicy {
+                        mode: if state.dry_run {
+                            RustScanMode::DryRun
+                        } else {
+                            RustScanMode::Execute
+                        },
+                        authorized_targets: state.authorized_targets.iter().cloned().collect(),
+                        timeout: Duration::from_secs(30),
+                        max_output_bytes: 1024 * 1024,
+                        batch_size: 100,
+                    };
+                    match execute_rustscan(
+                        target,
+                        operator_confirmed,
+                        &policy,
+                        &mut state.rustscan_log,
+                    ) {
+                        Ok(action) => println!(
+                            "{{\"schema\":\"{}\",\"tool\":\"{}\",\"target\":\"{}\",\"mode\":\"{}\",\"status\":\"{}\"}}",
+                            action.schema, action.tool, action.target, action.mode, action.status
+                        ),
+                        Err(error) => println!(
+                            "{{\"schema\":\"datya.action.v1\",\"tool\":\"rustscan\",\"target\":\"{}\",\"mode\":\"execute\",\"status\":\"error\",\"error\":\"{}\"}}",
+                            target,
+                            error
+                        ),
+                    }
                 }
-                (Some(_), Some(_)) => println!("blocked: target is not in the authorized scope"),
+                (Some(id), Some(target)) => {
+                    match (find_tool(id), state.authorized_targets.contains(target)) {
+                        (Some(tool), true) if tool.needs_network => {
+                            let ts = SystemTime::now()
+                                .duration_since(UNIX_EPOCH)
+                                .map_or(0, |d| d.as_secs());
+                            println!("{{\"schema\":\"datya.action.v1\",\"timestamp\":{},\"tool\":\"{}\",\"target\":\"{}\",\"mode\":\"{}\",\"status\":\"{}\"}}", ts, tool.id, target, if state.dry_run { "dry-run" } else { "execute" }, if state.dry_run { "planned" } else { "queued-for-policy-adapter" });
+                        }
+                        (Some(tool), _) if !tool.needs_network => {
+                            let ts = SystemTime::now()
+                                .duration_since(UNIX_EPOCH)
+                                .map_or(0, |d| d.as_secs());
+                            println!("{{\"schema\":\"datya.action.v1\",\"timestamp\":{},\"tool\":\"{}\",\"target\":\"{}\",\"mode\":\"{}\",\"status\":\"{}\"}}", ts, tool.id, target, if state.dry_run { "dry-run" } else { "execute" }, if state.dry_run { "planned" } else { "queued-for-policy-adapter" });
+                        }
+                        (Some(_), _) => println!("blocked: target is not in the authorized scope"),
+                        _ => println!("error: run requires a known tool and target"),
+                    }
+                }
                 _ => println!("error: run requires a known tool and target"),
             }
         }
@@ -497,6 +544,7 @@ fn main() {
     let mut state = ControlState {
         authorized_targets: BTreeSet::new(),
         dry_run: true,
+        rustscan_log: RustScanHashChainLog::default(),
     };
     print!("datya> ");
     let _ = io::stdout().flush();

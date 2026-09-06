@@ -83,6 +83,9 @@ dependencies = [
 [[package]]
 name = "datya-control-daemon"
 version = "0.1.0"
+dependencies = [
+ "datya-tool-adapters",
+]
 
 [[package]]
 name = "datya-guardian-daemon"

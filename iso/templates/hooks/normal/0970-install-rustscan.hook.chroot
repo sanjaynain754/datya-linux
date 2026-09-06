@@ -1,0 +1,34 @@
+#!/bin/sh
+set -eu
+
+# Install RustScan from pinned upstream release assets. This runs only while
+# building the image; it never starts a scan and never enables a service.
+VERSION=2.4.1
+BASE_URL="https://github.com/bee-san/RustScan/releases/download/${VERSION}"
+TMP_DIR=/tmp/datya-rustscan
+mkdir -p "$TMP_DIR"
+
+case "$(dpkg --print-architecture)" in
+  amd64)
+    ASSET="x86_64-linux-rustscan.tar.gz.zip"
+    SHA256="f3a4365d939e3b81f25ba8c37852ce9ac9e938c3cc882c5b3e6fff6152c740be"
+    curl --fail --silent --show-error --location "$BASE_URL/$ASSET" --output "$TMP_DIR/$ASSET"
+    printf '%s  %s\n' "$SHA256" "$TMP_DIR/$ASSET" | sha256sum --check --status
+    unzip -p "$TMP_DIR/$ASSET" x86_64-linux-rustscan.tar.gz | tar -xOzf - rustscan > /usr/local/bin/rustscan
+    ;;
+  arm64)
+    ASSET="aarch64-linux-rustscan.zip"
+    SHA256="4f49103e2dfc9e9709a36da2cd61f1f81613f8d0a203307f750439fc3ce39eae"
+    curl --fail --silent --show-error --location "$BASE_URL/$ASSET" --output "$TMP_DIR/$ASSET"
+    printf '%s  %s\n' "$SHA256" "$TMP_DIR/$ASSET" | sha256sum --check --status
+    unzip -p "$TMP_DIR/$ASSET" rustscan > /usr/local/bin/rustscan
+    ;;
+  *)
+    echo "Datya: unsupported architecture for RustScan release asset" >&2
+    exit 1
+    ;;
+esac
+
+chown root:root /usr/local/bin/rustscan
+chmod 0755 /usr/local/bin/rustscan
+rm -rf "$TMP_DIR"

@@ -237,6 +237,192 @@ fn blocked(tool: &str, target: Option<&str>, reason: &str) -> ExecutionResult {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RustScanMode {
+    DryRun,
+    Execute,
+}
+
+#[derive(Clone, Debug)]
+pub struct RustScanPolicy {
+    pub mode: RustScanMode,
+    pub authorized_targets: Vec<String>,
+    pub timeout: Duration,
+    pub max_output_bytes: usize,
+    pub batch_size: u16,
+}
+
+impl Default for RustScanPolicy {
+    fn default() -> Self {
+        Self {
+            mode: RustScanMode::DryRun,
+            authorized_targets: Vec::new(),
+            timeout: Duration::from_secs(30),
+            max_output_bytes: 1024 * 1024,
+            batch_size: 100,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+pub struct RustScanAction {
+    pub schema: &'static str,
+    pub tool: &'static str,
+    pub target: String,
+    pub mode: &'static str,
+    pub status: &'static str,
+}
+
+#[derive(Clone, Debug, Serialize, PartialEq, Eq)]
+pub struct RustScanHashChainEvent {
+    pub sequence: u64,
+    pub action: RustScanAction,
+    pub previous_hash: String,
+    pub hash: String,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct RustScanHashChainLog {
+    events: Vec<RustScanHashChainEvent>,
+}
+
+impl RustScanHashChainLog {
+    fn append(&mut self, action: RustScanAction) {
+        let previous_hash = self
+            .events
+            .last()
+            .map(|event| event.hash.clone())
+            .unwrap_or_else(|| "0".repeat(64));
+        let sequence = self.events.len() as u64;
+        let canonical = format!(
+            "{}\\n{}\\n{}\\n{}",
+            sequence,
+            serde_json::to_string(&action).expect("RustScanAction serialization cannot fail"),
+            previous_hash,
+            action.status
+        );
+        let hash = hex_digest(canonical.as_bytes());
+        self.events.push(RustScanHashChainEvent {
+            sequence,
+            action,
+            previous_hash,
+            hash,
+        });
+    }
+
+    pub fn events(&self) -> &[RustScanHashChainEvent] {
+        &self.events
+    }
+
+    pub fn verify(&self) -> bool {
+        let mut previous = "0".repeat(64);
+        for (index, event) in self.events.iter().enumerate() {
+            if event.sequence != index as u64 || event.previous_hash != previous {
+                return false;
+            }
+            let canonical = format!(
+                "{}\\n{}\\n{}\\n{}",
+                event.sequence,
+                serde_json::to_string(&event.action)
+                    .expect("RustScanAction serialization cannot fail"),
+                event.previous_hash,
+                event.action.status
+            );
+            if hex_digest(canonical.as_bytes()) != event.hash {
+                return false;
+            }
+            previous = event.hash.clone();
+        }
+        true
+    }
+}
+
+pub fn execute_rustscan(
+    target: &str,
+    operator_confirmed: bool,
+    policy: &RustScanPolicy,
+    log: &mut RustScanHashChainLog,
+) -> io::Result<RustScanAction> {
+    let blocked = |log: &mut RustScanHashChainLog| {
+        let action = RustScanAction {
+            schema: "datya.action.v1",
+            tool: "rustscan",
+            target: target.to_string(),
+            mode: if operator_confirmed {
+                "execute"
+            } else {
+                "dry-run"
+            },
+            status: "blocked",
+        };
+        log.append(action.clone());
+        action
+    };
+
+    if !valid_nmap_target(target) || !policy.authorized_targets.iter().any(|item| item == target) {
+        return Ok(blocked(log));
+    }
+    if !operator_confirmed || policy.mode == RustScanMode::DryRun {
+        let action = RustScanAction {
+            schema: "datya.action.v1",
+            tool: "rustscan",
+            target: target.to_string(),
+            mode: "dry-run",
+            status: "planned",
+        };
+        log.append(action.clone());
+        return Ok(action);
+    }
+
+    let timeout = policy.timeout.min(Duration::from_secs(30));
+    let max_output_bytes = policy.max_output_bytes.min(1024 * 1024);
+    let output_dir = std::env::temp_dir();
+    let stamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_or(0, |duration| duration.as_nanos());
+    let stdout_path = output_dir.join(format!("datya-rustscan-{stamp}.out"));
+    let stderr_path = output_dir.join(format!("datya-rustscan-{stamp}.err"));
+    let mut child = Command::new("/usr/bin/rustscan")
+        .args([
+            "--addresses",
+            target,
+            "--batch-size",
+            &policy.batch_size.to_string(),
+            "--timeout",
+            "1500",
+        ])
+        .stdout(Stdio::from(File::create(&stdout_path)?))
+        .stderr(Stdio::from(File::create(&stderr_path)?))
+        .spawn()?;
+    let started = Instant::now();
+    let mut over_limit = false;
+    loop {
+        if child.try_wait()?.is_some() {
+            break;
+        }
+        let output_size = fs::metadata(&stdout_path).map_or(0, |meta| meta.len())
+            + fs::metadata(&stderr_path).map_or(0, |meta| meta.len());
+        if output_size > max_output_bytes as u64 || started.elapsed() >= timeout {
+            over_limit = output_size > max_output_bytes as u64;
+            child.kill()?;
+            let _ = child.wait();
+            break;
+        }
+        thread::sleep(Duration::from_millis(20));
+    }
+    let action = RustScanAction {
+        schema: "datya.action.v1",
+        tool: "rustscan",
+        target: target.to_string(),
+        mode: "execute",
+        status: if over_limit { "blocked" } else { "completed" },
+    };
+    log.append(action.clone());
+    let _ = fs::remove_file(stdout_path);
+    let _ = fs::remove_file(stderr_path);
+    Ok(action)
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum NmapMode {
     DryRun,
     Execute,
@@ -485,6 +671,59 @@ mod tests {
             authorized_targets: vec!["127.0.0.1".into()],
             ..NmapPolicy::default()
         }
+    }
+
+    fn rustscan_policy(mode: RustScanMode) -> RustScanPolicy {
+        RustScanPolicy {
+            mode,
+            authorized_targets: vec!["127.0.0.1".into()],
+            ..RustScanPolicy::default()
+        }
+    }
+
+    #[test]
+    fn rustscan_defaults_to_dry_run_and_emits_required_json() {
+        let mut log = RustScanHashChainLog::default();
+        let action = execute_rustscan(
+            "127.0.0.1",
+            false,
+            &rustscan_policy(RustScanMode::DryRun),
+            &mut log,
+        )
+        .unwrap();
+        assert_eq!(action.mode, "dry-run");
+        assert_eq!(action.status, "planned");
+        assert_eq!(action.tool, "rustscan");
+        assert!(log.verify());
+    }
+
+    #[test]
+    fn rustscan_requires_scope_before_confirmation() {
+        let mut log = RustScanHashChainLog::default();
+        let action = execute_rustscan(
+            "192.0.2.1",
+            true,
+            &rustscan_policy(RustScanMode::Execute),
+            &mut log,
+        )
+        .unwrap();
+        assert_eq!(action.status, "blocked");
+        assert!(log.verify());
+    }
+
+    #[test]
+    fn rustscan_requires_operator_confirmation() {
+        let mut log = RustScanHashChainLog::default();
+        let action = execute_rustscan(
+            "127.0.0.1",
+            false,
+            &rustscan_policy(RustScanMode::Execute),
+            &mut log,
+        )
+        .unwrap();
+        assert_eq!(action.mode, "dry-run");
+        assert_eq!(action.status, "planned");
+        assert!(log.verify());
     }
 
     #[test]

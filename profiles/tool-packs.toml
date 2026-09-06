@@ -21,7 +21,7 @@ tools = ["nmap", "curl", "wget", "ffuf", "nikto", "whatweb", "python3-requests"]
 [pack.network-lab]
 summary = "Authorized network protocol and traffic analysis"
 profile = "security-lab"
-tools = ["nmap", "tcpdump", "tshark", "wireshark", "netcat-openbsd", "socat", "mitmproxy"]
+tools = ["nmap", "rustscan", "tcpdump", "tshark", "wireshark", "netcat-openbsd", "socat", "mitmproxy"]
 
 [pack.cloud-code]
 summary = "Local source, dependency, SBOM, IaC, and container review"

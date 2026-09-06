@@ -6,3 +6,4 @@ description = "Scope-aware control daemon and keyboard interface for Datya cyber
 license = "Apache-2.0"
 
 [dependencies]
+datya-tool-adapters = { path = "../tool-adapters" }

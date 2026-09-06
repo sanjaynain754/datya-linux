@@ -26,8 +26,8 @@ rm -rf config cache chroot binary .build
 mkdir -p auto config/package-lists config/includes.chroot/etc/datya config/includes.chroot/usr/local/bin config/includes.chroot/usr/bin
 # Restore tracked Calamares and security-hook templates after the clean build reset.
 cp -a "$PROJECT_DIR/templates/calamares/." config/includes.chroot/etc/calamares/
-mkdir -p config/hooks/normal
-cp -a "$PROJECT_DIR/templates/hooks/normal/." config/hooks/normal/
+mkdir -p config/hooks
+cp -a "$PROJECT_DIR/templates/hooks/normal/." config/hooks/
 # live-build invokes the legacy `rsvg` name; Trixie provides `rsvg-convert`.
 cat > config/includes.chroot/usr/bin/rsvg <<'EOF'
 #!/bin/sh
@@ -87,7 +87,7 @@ sudo
 apparmor apparmor-utils apparmor-profiles
 cryptsetup-initramfs cryptsetup
 polkitd pkexec
-ca-certificates gnupg
+ca-certificates gnupg unzip
 syslinux-utils
 openssh-client
 network-manager

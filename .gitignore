@@ -31,5 +31,6 @@ iso/config/includes.chroot/etc/datya/
 iso/config/includes.chroot/etc/systemd/
 iso/config/includes.chroot/usr/
 iso/config/package-lists/
+iso/config/hooks/
 iso/config/source
 iso/wget-log*
