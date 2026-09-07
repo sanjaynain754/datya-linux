@@ -1,6 +1,6 @@
 # Datya Linux
 
-[![CI](https://github.com/sanjaynain754/datya-linux/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sanjaynain754/datya-linux/actions/workflows/ci.yml) [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE) [![Version: v0.1.3](https://img.shields.io/badge/version-v0.1.3-0ea5e9.svg)](VERSION) [![Security Policy](https://img.shields.io/badge/security-policy-SECURITY.md-16a34a.svg)](SECURITY.md)
+[![CI](https://github.com/sanjaynain754/datya-linux/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sanjaynain754/datya-linux/actions/workflows/ci.yml) [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE) [![Version: v0.1.4](https://img.shields.io/badge/version-v0.1.4-0ea5e9.svg)](VERSION) [![Security Policy](https://img.shields.io/badge/security-policy-SECURITY.md-16a34a.svg)](SECURITY.md)
 
 
 **Datya Linux** is an open, security-first **general-purpose Linux distribution** with a built-in cybersecurity workbench for ethical hackers, blue teams, incident responders, security learners, researchers, developers, administrators, and everyday users using modern laptops, desktops, workstations, Raspberry Pi 5, and other capable x86_64/ARM64 systems.
@@ -18,9 +18,9 @@ The project aims to make privacy and system activity understandable without hidi
 
 ## Current status
 
-Datya Linux v0.1.3 is a validated Debian Trixie amd64 live-image engineering release with an XFCE desktop, Calamares installation entry point, modular security-workbench components, strict package metadata validation, and documented hardware limits. It is not a universal hardware-support or production Secure Boot guarantee and should not be treated as a complete security boundary or production intrusion detector without independent review.
+Datya Linux v0.1.4 is the current Debian Trixie amd64 engineering line with an XFCE desktop, Calamares installation entry point, modular security-workbench components, RustScan integration, strict package metadata validation, and documented hardware limits. It is not a universal hardware-support or production Secure Boot guarantee and should not be treated as a complete security boundary or production intrusion detector without independent review.
 
-Start with the [v0.1.3 release notes](docs/V0.1.3_RELEASE.md), [hardware-support guide](docs/HARDWARE_SUPPORT.md), and [security policy](SECURITY.md) before building or installing the image.
+Start with the [v0.1.4 release notes](docs/V0.1.4_RELEASE.md), [hardware-support guide](docs/HARDWARE_SUPPORT.md), and [security policy](SECURITY.md) before building or installing the image.
 
 ## See Datya Linux
 
@@ -52,6 +52,7 @@ GitHub Actions now checks Rust formatting/tests/clippy, the C++17 daemon build, 
 - [Secure Boot and kernel sensor](docs/SECURE_BOOT.md)
 - [Defensive hardening](docs/DEFENSIVE_HARDENING.md)
 - [Debian ISO builder](iso/README.md)
+- [v0.1.4 release notes](docs/V0.1.4_RELEASE.md)
 - [v0.1.3 release notes](docs/V0.1.3_RELEASE.md)
 - [Hardware and device support](docs/HARDWARE_SUPPORT.md)
 - [RustScan integration](docs/RUSTSCAN_INTEGRATION.md)
@@ -75,7 +76,7 @@ Optional capability profiles are catalogued in `profiles/catalog.toml` and can b
 
 The read-only `tools/datya-security-audit.sh` checks filesystem permissions, ownership, SUID/SGID, writable paths, sensitive files, symlinks, ACLs, and available authentication-log indicators. It supports text and JSON reports and severity-based exit codes; it does not modify the system or prove historical access.
 
-The curated Debian package manifest is `packages/manifest.json`. Validate it with `python3 tools/verify-package-manifest.py packages/manifest.json --strict`; the current source records exact artifact metadata and copyright-file audit evidence for 39 curated package records.
+The curated Debian package manifest is `packages/manifest.json`. Validate it with `python3 tools/verify-package-manifest.py packages/manifest.json --strict`; the current source records exact artifact metadata and copyright-file audit evidence for 40 curated package records.
 
 `tools/datya-debian-sync.py` validates signed Debian `InRelease` metadata, package-index hashes/sizes, and curated package availability without installing packages. Its systemd service/timer templates support reviewed periodic metadata reports.
 

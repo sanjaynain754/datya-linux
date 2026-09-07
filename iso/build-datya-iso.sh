@@ -177,5 +177,7 @@ chmod 0644 config/includes.chroot/etc/datya/policy
 
 # Build with checksums. For a release, pin a Debian snapshot and verify its
 # signed Release metadata before publishing the resulting SHA256SUMS file.
+# Remove sidecars from an earlier interrupted build so zsync generation is idempotent.
+rm -f binary.hybrid.iso.zsync binary.hybrid.iso.zsync.xz
 lb build
 printf '%s\n' 'ISO build complete. Review binary/live-image-*.iso and SHA256SUMS before release.'

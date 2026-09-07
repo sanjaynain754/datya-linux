@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.1.4 — Development release
+
+- Promoted the post-v0.1.3 mainline with the verified RustScan 2.4.1 integration, opt-in security-lab catalog entry, scoped daemon route, dry-run default, operator confirmation, bounded execution, and local evidence hashing.
+- Added complete GPL-3.0 licensing, responsible-disclosure policy, promotion-ready badges, screenshots, and maintainer contact information.
+- Added the verified Debian Trixie `bind9-dnsutils` metadata record and corrected CI checks for the actual Calamares live-image installer path.
+- Preserved tracked Calamares and security-hook templates across clean ISO rebuilds and documented the transparent Guardian userspace-collector fallback.
+- Marked Secure Boot signing, physical installer/recovery validation, arm64 ISO support, and broad hardware coverage as explicit release gates rather than completed claims.
+
+See `docs/V0.1.4_RELEASE.md` for the engineering-release scope, requirements, validation status, and limitations.
+
 ## Unreleased — RustScan integration
 
 - Added pinned RustScan 2.4.1 official release assets for amd64 and arm64 with recorded SHA-256 values.
