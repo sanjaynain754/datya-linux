@@ -14,10 +14,21 @@ class InstallPackTests(unittest.TestCase):
         return subprocess.run([sys.executable, str(INSTALLER), *args], cwd=ROOT, capture_output=True, text=True)
 
     def test_unverified_pack_is_blocked(self):
-        result = self.run_cli("--pack", "observe")
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("verification blocked", result.stderr)
-        self.assertIn("absent from packages/manifest.json", result.stderr)
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("datya_install_pack", INSTALLER)
+        module = importlib.util.module_from_spec(spec)
+        assert spec.loader is not None
+        spec.loader.exec_module(module)
+        names, errors = module.resolve(
+            "unverified",
+            False,
+            {"unverified": {"tools": ["demo-tool"]}},
+            {"demo-tool": {"name": "demo-tool", "verification_status": "pending", "sha256": "a" * 64, "architectures": ["amd64"], "repository": "https://example.invalid"}},
+        )
+        self.assertEqual(names, ["demo-tool"])
+        self.assertTrue(any("verification_status" in error for error in errors))
+        self.assertTrue(any("real SHA-256 checksum" in error for error in errors))
 
     def test_unknown_pack_is_rejected(self):
         result = self.run_cli("--pack", "unknown")
