@@ -732,7 +732,7 @@
         "package-install"
       ],
       "uninstall_path": "apt remove jq",
-      "maintainer": "ChangZhuo Chen (陳昌倬) <czchen@debian.org>",
+      "maintainer": "ChangZhuo Chen (\u9673\u660c\u502c) <czchen@debian.org>",
       "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
@@ -1615,7 +1615,7 @@
         "package-install"
       ],
       "uninstall_path": "apt remove wget",
-      "maintainer": "Noël Köthe <noel@debian.org>",
+      "maintainer": "No\u00ebl K\u00f6the <noel@debian.org>",
       "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
     },
     {
@@ -1749,6 +1749,50 @@
       "uninstall_path": "apt remove xxd",
       "maintainer": "Debian Vim Maintainers <team+vim@tracker.debian.org>",
       "notes": "Exact version and amd64/arm64 artifact checksums sourced from signed Debian Trixie Packages indexes; Exact artifact copyright file retrieved and reviewed; license terms are maintained in the Debian copyright file."
+    },
+    {
+      "name": "bind9-dnsutils",
+      "binary_version": "1:9.20.23-1~deb13u1",
+      "source_package": "bind9",
+      "source_version": "9.20.23-1~deb13u1",
+      "channel": "stable",
+      "architectures": [
+        "amd64",
+        "arm64"
+      ],
+      "repository": "https://deb.debian.org/debian",
+      "source_url": "https://packages.debian.org/trixie/bind9-dnsutils",
+      "license": "SEE-DEBIAN-COPYRIGHT",
+      "sha256": "75f3120f4811354e72481033652787867f9e2bbd04e19a4fae885e8ad97ded63",
+      "artifacts": {
+        "amd64": {
+          "filename": "pool/main/b/bind9/bind9-dnsutils_9.20.23-1~deb13u1_amd64.deb",
+          "size": 165864,
+          "sha256": "75f3120f4811354e72481033652787867f9e2bbd04e19a4fae885e8ad97ded63"
+        },
+        "arm64": {
+          "filename": "pool/main/b/bind9/bind9-dnsutils_9.20.23-1~deb13u1_arm64.deb",
+          "size": 158748,
+          "sha256": "ff3eccc9802a53d3757b8eda99daef3d19ca6fba899064ad49a7f046cc849cf2"
+        }
+      },
+      "privileges": [
+        "user-tool"
+      ],
+      "network_behavior": "network-client",
+      "profiles": [
+        "security-observe"
+      ],
+      "status": "catalogued",
+      "verification_status": "verified",
+      "tests": [
+        "signed-index-availability",
+        "artifact-sha256",
+        "package-install"
+      ],
+      "uninstall_path": "apt remove bind9-dnsutils",
+      "maintainer": "Debian DNS Team <team+dns@tracker.debian.org>",
+      "notes": "Exact version and amd64/arm64 artifact checksums sourced from Debian Trixie Packages indexes; license terms are maintained in the Debian copyright file."
     }
   ]
 }
