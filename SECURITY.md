@@ -4,7 +4,7 @@ Datya Linux is a security-focused, freedom-first project. We welcome responsible
 
 ## Reporting a vulnerability
 
-Please report security issues privately to **sanjayn754@users.noreply.github.com** or through [GitHub private vulnerability reporting](https://github.com/sanjaynain754/datya-linux/security/advisories/new). Do not open a public issue for an unpatched vulnerability, include live credentials, or publish exploit details before maintainers have had a reasonable opportunity to investigate.
+Please report security issues privately to **sanjaynain754@users.noreply.github.com** or through [GitHub private vulnerability reporting](https://github.com/sanjaynain754/datya-linux/security/advisories/new). Do not open a public issue for an unpatched vulnerability, include live credentials, or publish exploit details before maintainers have had a reasonable opportunity to investigate.
 
 Your report should include the affected commit, release or ISO checksum, component and file, a concise description of impact, reproduction steps, expected and observed behavior, and any safe mitigation. For hardware-dependent issues, include the device model, firmware version, kernel version, architecture, and exact image checksum.
 
